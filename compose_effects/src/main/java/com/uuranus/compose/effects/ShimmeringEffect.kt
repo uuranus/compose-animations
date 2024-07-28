@@ -1,6 +1,8 @@
 package com.uuranus.compose.effects
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -37,7 +39,9 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.LinearGradientShader
@@ -50,9 +54,11 @@ import androidx.compose.ui.graphics.withSaveLayer
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.zIndex
 
 @Composable
@@ -105,134 +111,6 @@ fun ShimmeringBox(content: @Composable BoxScope.() -> Unit) {
 
 }
 
-//@Composable
-//fun ShimmerEffect(
-//    modifier: Modifier = Modifier,
-//) {
-//
-//    val transition = rememberInfiniteTransition(label = "")
-//    val translateAnim = transition.animateFloat(
-//        initialValue = 0f,
-//        targetValue = 1f,
-//        animationSpec = infiniteRepeatable(
-//            animation = tween(
-//                durationMillis = 1000,
-//                easing = LinearEasing
-//            )
-//        ), label = ""
-//    )
-//
-//    val transformationMatrix = Matrix()
-//
-//    Canvas(
-//        modifier = modifier
-//    ) {
-//        val paint = Paint()
-//
-//        val gradientFrom = Offset(-size.width / 2, 0f)
-//        val gradientTo = -gradientFrom
-//
-//        val progress = translateAnim.value
-//
-//        val traversal = -size.width / 2 + size.width * progress - size.width / 2
-//
-//        transformationMatrix.apply {
-//            reset()
-//            translate(
-//                translateAnim.value * size.width, translateAnim.value * size.height
-//            )
-//            rotateZ(45f)
-//            translate(-translateAnim.value * size.width, -translateAnim.value * size.height, 0f)
-//            translate(traversal, 0f, 0f)
-//        }
-//
-//        val gradientWidth = size.width / 5
-//
-//        paint.shader = LinearGradientShader(
-//            from = Offset(-gradientWidth / 2 + translateAnim.value * size.width, 0f),
-//            to = Offset(gradientWidth / 2 + translateAnim.value * size.width, 0f),
-//            colors = listOf(
-//                Color.Transparent,
-//                Color.White,
-//                Color.Transparent
-//            ),
-//        )
-//
-//        val drawArea = size.toRect()
-//        drawIntoCanvas { canvas ->
-//            canvas.withSaveLayer(
-//                bounds = drawArea,
-//                paint = Paint(),
-//            ) {
-//                canvas.drawRect(drawArea, paint)
-//            }
-//        }
-//    }
-//}
-
-//@Composable
-//fun ShimmeringEffect(
-//    isLoading: Boolean,
-//    contentAfterLoading: @Composable () -> Unit,
-//    modifier: Modifier = Modifier,
-//) {
-//    if (isLoading) {
-//        var size by remember {
-//            mutableStateOf(IntSize.Zero)
-//        }
-//
-//        Row(
-//            modifier = modifier
-//                .onGloballyPositioned {
-//                    size = it.size
-//                }
-//        ) {
-//
-//            Box(
-//                modifier = Modifier
-//                    .size(100.dp)
-//                    .clip(
-//                        shape = RoundedCornerShape((size.height / 2).toDp())
-//                    )
-//                    .background(
-//                        Color(0xFF1C1A1D),
-//                    )
-//                    .shimmerEffect()
-//            )
-//            Spacer(modifier = Modifier.width(16.dp))
-//            Column(modifier = Modifier.weight(1f)) {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(20.dp)
-//                        .clip(
-//                            shape = RoundedCornerShape((size.height / 2).toDp())
-//                        )
-//                        .background(
-//                            Color(0xFF1C1A1D)
-//                        )
-//                        .shimmerEffect()
-//                )
-//                Spacer(modifier = Modifier.height(16.dp))
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth(0.7f)
-//                        .height(20.dp)
-//                        .clip(
-//                            shape = RoundedCornerShape((size.height / 2).toDp())
-//                        )
-//                        .background(
-//                            Color(0xFF1C1A1D),
-//                        )
-//                        .shimmerEffect()
-//                )
-//            }
-//        }
-//    } else {
-//        contentAfterLoading()
-//    }
-//}
-
 @Composable
 fun ShimmeringEffect(
     isLoading: Boolean,
@@ -250,19 +128,6 @@ fun ShimmeringEffect(
             shadowWidth.toDp()
         }
 
-        val transition = rememberInfiniteTransition(label = "")
-        val startOffsetX by transition.animateFloat(
-            initialValue = -shadowWidth,
-            targetValue = shadowWidth,
-            animationSpec = infiniteRepeatable(
-                animation = tween(
-                    durationMillis = 3000,
-                    easing = LinearEasing
-                )
-            ),
-            label = ""
-        )
-
         Row(
             modifier = modifier
                 .onGloballyPositioned {
@@ -279,25 +144,11 @@ fun ShimmeringEffect(
                     .background(
                         Color(0xFF1C1A1D),
                     )
-                    .graphicsLayer {
-                        translationX = startOffsetX
-                    }
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(shadowWidthDp)
-                        .background(
-                            brush = Brush.horizontalGradient(
-                                colors = listOf(
-                                    Color(0xff5e5c5f).copy(alpha = 0.6f),
-                                    Color(0xff5e5c5f).copy(alpha = 0.9f),
-                                    Color(0xff5e5c5f).copy(alpha = 0.6f),
-                                ),
-                            ),
-                        )
-                ) {}
-            }
+                    .shimmerEffect(
+                        size = size,
+                        shadowWidthDp = shadowWidthDp
+                    )
+            )
 
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
@@ -311,54 +162,29 @@ fun ShimmeringEffect(
                         .background(
                             Color(0xFF1C1A1D)
                         )
-                        .graphicsLayer {
-                            translationX = startOffsetX
-                        }
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .width(shadowWidthDp)
-                            .background(
-                                brush = Brush.horizontalGradient(
-                                    colors = listOf(
-                                        Color(0xff5e5c5f).copy(alpha = 0.6f),
-                                        Color(0xff5e5c5f).copy(alpha = 0.9f),
-                                        Color(0xff5e5c5f).copy(alpha = 0.6f),
-                                    ),
-                                ),
-                            )
-                    ) {}
-                }
+                        .shimmerEffect(
+                            size = size,
+                            shadowWidthDp = shadowWidthDp
+                        )
+                )
+
                 Spacer(modifier = Modifier.height(16.dp))
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.7f)
+                        .fillMaxWidth()
                         .height(20.dp)
                         .clip(
-                            shape = RoundedCornerShape((size.height / 2).toDp())
+                            shape = RoundedCornerShape((20.dp / 2)) // Adjust accordingly
                         )
                         .background(
                             Color(0xFF1C1A1D),
                         )
-                        .graphicsLayer {
-                            translationX = startOffsetX
-                        }
+                        .shimmerEffect(
+                            size = size,
+                            shadowWidthDp = shadowWidthDp
+                        )
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .width(shadowWidthDp)
-                            .background(
-                                brush = Brush.horizontalGradient(
-                                    colors = listOf(
-                                        Color(0xff5e5c5f).copy(alpha = 0.6f),
-                                        Color(0xff5e5c5f).copy(alpha = 0.9f),
-                                        Color(0xff5e5c5f).copy(alpha = 0.6f),
-                                    ),
-                                ),
-                            )
-                    ) {}
+                    // Your content here
                 }
             }
         }
@@ -367,45 +193,46 @@ fun ShimmeringEffect(
     }
 }
 
-fun Modifier.shimmerEffect(): Modifier = composed {
-    var size by remember {
-        mutableStateOf(IntSize.Zero)
-    }
-
-    val shadowWidth = with(LocalDensity.current) {
-        100.dp.toPx()
-    }
+fun Modifier.shimmerEffect(size: IntSize, shadowWidthDp: Dp): Modifier = composed {
 
     val transition = rememberInfiniteTransition(label = "")
+    val shadowWidthPx = with(LocalDensity.current) {
+        shadowWidthDp.toPx()
+    }
+
     val startOffsetX by transition.animateFloat(
-        initialValue = -2 * size.width.toFloat(),
-        targetValue = 2 * size.width.toFloat(),
+        initialValue = -shadowWidthPx,
+        targetValue = size.width.toFloat(),
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = 3000,
-                easing = LinearEasing
-            )
+                durationMillis = 1500,
+                easing = EaseInOut
+            ),
         ),
         label = ""
     )
 
-    background(
-        brush = Brush.horizontalGradient(
-            colors = listOf(
-                Color.Transparent,
-                Color(0xff5e5c5f).copy(alpha = 1.0f),
-                Color(0xff5e5c5f).copy(alpha = 1.0f),
-                Color(0xff5e5c5f).copy(alpha = 1.0f),
-                Color.Transparent
-            ),
-            startX = startOffsetX,
-            endX = startOffsetX + shadowWidth,
-            tileMode = TileMode.Decal
+    val brush = Brush.horizontalGradient(
+        colors = listOf(
+            Color(0xff5e5c5f).copy(alpha = 0.6f),
+            Color(0xff5e5c5f).copy(alpha = 0.9f),
+            Color(0xff5e5c5f).copy(alpha = 0.6f),
         ),
+        startX = 0f,
+        endX = shadowWidthPx
     )
-        .onGloballyPositioned {
-            size = it.size
-        }
 
+    graphicsLayer {
+        translationX = startOffsetX
+    }.drawWithContent {
+        val shimmerWidthPx = shadowWidthDp.toPx()
+
+        drawRect(
+            brush = brush,
+            topLeft = Offset(x = 0f, y = 0f),
+            size = Size(shimmerWidthPx, size.height.toFloat())
+        )
+    }
 }
+
 
