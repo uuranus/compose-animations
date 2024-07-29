@@ -2,11 +2,9 @@
 Various Useful Effects  with Jetpack Compose
 
 # Instagram
-|pc upload complete|
-|:--:|
-|<img src = "https://github.com/user-attachments/assets/e9e452e5-3116-45b3-a701-6fbf08e9f463" width = "250">|
-
-
+|pc upload complete| heart |
+|:--:| :--:|
+|<img src = "https://github.com/user-attachments/assets/e9e452e5-3116-45b3-a701-6fbf08e9f463" width = "250">|<img src = "https://github.com/user-attachments/assets/322e50d7-97a8-451b-ab1c-126bdb886cdd" width = "250">|
 
 # Youtube
 |shimmering|
