@@ -49,7 +49,6 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun GradientTransition(
 ) {
-
     val contents = listOf(
         Color.Red,
         Color.Blue,
@@ -150,7 +149,6 @@ fun GradientTransition(
             }
         }
     }
-
 }
 
 @Composable

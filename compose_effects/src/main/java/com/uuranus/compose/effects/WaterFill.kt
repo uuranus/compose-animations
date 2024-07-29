@@ -22,7 +22,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-
 @Composable
 fun WaterFill() {
 
@@ -51,8 +50,7 @@ fun WaterFill() {
                 .height(height)
                 .background(Color(0xff10BBE5))
                 .clickable {
-
-                    targetHeight = contentHeight.coerceAtMost(targetHeight + 100.dp)
+                    targetHeight = contentHeight.coerceAtMost(targetHeight + 200.dp)
 
                     if (targetHeight == contentHeight) {
                         targetHeight = 100.dp

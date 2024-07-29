@@ -54,32 +54,3 @@ fun DrawScope.drawRippleEffect(radius: Float, color: Color) {
     )
 }
 
-@Composable
-fun WaveEffect() {
-    val duration = 500L
-    val delayPerItem = 100L
-    val transition = rememberInfiniteTransition(label = "")
-
-    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        "Hello".forEachIndexed { index, c ->
-            val scale by transition.animateFloat(
-                initialValue = 1f,
-                targetValue = 2f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(
-                        durationMillis = duration.toInt(),
-                        easing = FastOutSlowInEasing
-                    ),
-                    repeatMode = RepeatMode.Reverse,
-                    initialStartOffset = StartOffset(offsetMillis = ((delayPerItem * index) % duration).toInt())
-                ),
-                label = "",
-            )
-            Text(text = c.toString(), fontSize = (24 * scale).sp)
-        }
-    }
-}
-
-fun DrawScope.drawWave(offsetX: Float, size: Size, color: Color) {
-
-}
