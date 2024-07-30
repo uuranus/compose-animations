@@ -1,13 +1,14 @@
 package com.uuranus.compose.effects
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector2D
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.TwoWayConverter
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -16,63 +17,142 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
+import com.uuranus.variousshapes.RingShape
 import kotlinx.coroutines.launch
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-val OffsetToVectorConverter = TwoWayConverter<Offset, AnimationVector2D>(
-    convertToVector = { AnimationVector2D(it.x, it.y) },
-    convertFromVector = { Offset(it.v1, it.v2) }
-)
-
 @Composable
-fun HeartButton() {
+fun TwitterHeartMotion(modifier: Modifier = Modifier) {
     var isLiked by remember { mutableStateOf(false) }
-    val scale by animateFloatAsState(
-        targetValue = if (isLiked) 1.5f else 0f,
-        animationSpec = spring(
-            dampingRatio = 0.5f, // 낮은 값은 바운스가 더 많아짐
-            stiffness = 800f // 낮은 값은 더 부드러운 움직임
-        ), label = ""
-    )
+    var isHeartScaleStart by remember { mutableStateOf(false) }
+
+    val circleSizeDuration = 1000
+    val heartSizeDuration = 1000
 
     var size by remember {
-        mutableStateOf(IntSize.Zero)
+        mutableStateOf(IntSize.Zero )
+    }
+
+    var circleScale by remember { mutableFloatStateOf(0f) }
+    var heartScale by remember { mutableFloatStateOf(0f) }
+    val circleColor = remember {
+        androidx.compose.animation.Animatable(Color(0xFFEB2E68))
+    }
+    var ringWidth by remember { mutableFloatStateOf(25f) }
+    var confettiAlpha by remember { mutableFloatStateOf(1f) }
+    var confettiRadius by remember { mutableFloatStateOf(size.width.toFloat()) }
+
+    LaunchedEffect(isLiked) {
+        if (isLiked) {
+            launch {
+                animate(
+                    initialValue = 0f,
+                    targetValue = 1.5f,
+                    animationSpec = tween(circleSizeDuration, easing = LinearEasing)
+                ) { value, _ ->
+                    circleScale = value
+
+                    if (circleScale.toInt() == 1) {
+                        isHeartScaleStart = true
+                    }
+                }
+            }
+            circleColor.snapTo(Color(0xFFEB2E68))
+            launch {
+                circleColor.animateTo(
+                    Color(0xFFD38CF1),
+                    animationSpec = tween(circleSizeDuration, easing = LinearEasing)
+                )
+            }
+        } else {
+            isHeartScaleStart = false
+        }
+
+    }
+
+    LaunchedEffect(isHeartScaleStart) {
+        if (isHeartScaleStart) {
+            launch {
+                animate(
+                    initialValue = 0f,
+                    targetValue = 1f,
+                    animationSpec = tween(heartSizeDuration, easing = LinearEasing)
+                ) { value, _ ->
+                    heartScale = value
+                }
+            }
+            launch {
+                animate(
+                    initialValue = 25f,
+                    targetValue = 0f,
+                    animationSpec = tween(heartSizeDuration, easing = LinearEasing)
+                ) { value, _ ->
+                    ringWidth = value
+                }
+            }
+            launch {
+                animate(
+                    initialValue = 1f,
+                    targetValue = 0f,
+                    animationSpec = tween(heartSizeDuration, easing = LinearEasing)
+                ) { value, _ ->
+                    confettiAlpha = value
+                }
+            }
+            launch {
+                animate(
+                    initialValue = size.width / 2f,
+                    targetValue = (size.width / 2f) * 1.5f,
+                    animationSpec = tween(heartSizeDuration, easing = LinearEasing)
+                ) { value, _ ->
+                    confettiRadius = value
+                }
+            }
+
+        } else {
+
+            heartScale = 0f
+            ringWidth = 25f
+        }
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         Box(
             modifier = Modifier
-                .width(150.dp)
-                .height(150.dp)
+                .width(50.dp)
+                .height(50.dp)
                 .onGloballyPositioned {
                     size = it.size
                 }
@@ -81,51 +161,70 @@ fun HeartButton() {
                 },
             contentAlignment = Alignment.Center
         ) {
-            Image(
-                imageVector = Icons.Default.Favorite,
-                contentDescription = "Heart",
-                modifier = Modifier
-                    .scale(scale)
-                    .size(50.dp)
-            )
+            val heartSize = with(LocalDensity.current) {
+                50.dp.toPx()
+            }
+            if (isLiked) {
+                Box(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .scale(circleScale)
+                        .clip(
+                            shape = RingShape(ringWidth = ringWidth.dp)
+                        )
+                        .background(
+                            color = circleColor.value
+                        )
+                )
+
+                ConfettiEffect(
+                    size = Size(heartSize, heartSize),
+                    alpha = confettiAlpha,
+                    radius = confettiRadius
+                )
+
+                Image(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "Heart",
+                    colorFilter = ColorFilter.tint(Color(0xFFFF1B81)),
+                    modifier = Modifier
+                        .scale(heartScale)
+                        .size(50.dp)
+                )
+            } else {
+                Image(
+                    imageVector = Icons.Default.FavoriteBorder,
+                    contentDescription = "Heart",
+                    colorFilter = ColorFilter.tint(color = Color.DarkGray),
+                    modifier = Modifier
+                        .size(50.dp)
+                )
+            }
+
         }
 
-
-        if (isLiked) {
-            ExplodingHearts(
-                size = size
-            )
-        }
     }
 
 }
 
 @Composable
-fun ExplodingHearts(size: IntSize) {
-    val heartCount = 6
+fun ConfettiEffect(size: Size, alpha: Float, radius: Float) {
+    val heartCount = 7
 
     val animatables = remember {
-        mutableStateOf(
-            List(heartCount) {
-                Animatable(
-                    Offset(size.width / 2f, size.height / 2f),
-                    OffsetToVectorConverter
-                )
-            }
-        )
+        mutableStateOf(getConffetiOffset(heartCount, size, radius).map {
+            Animatable(it, Offset.VectorConverter)
+        })
     }
 
-    val targetValues = remember {
-        mutableStateOf(getExplodingHeartOffset(heartCount, size))
-    }
+    println("targetValue ${animatables.value.joinToString(" ")}")
 
     LaunchedEffect(Unit) {
         animatables.value.forEachIndexed { index, animatable ->
             launch {
-                delay(index * 100L)
                 animatable.animateTo(
-                    targetValue = targetValues.value[index],
-                    animationSpec = tween(800, easing = FastOutSlowInEasing)
+                    animatable.targetValue,
+                    animationSpec = tween(1000, easing = FastOutSlowInEasing)
                 )
             }
         }
@@ -148,28 +247,42 @@ fun ExplodingHearts(size: IntSize) {
             val offsetX = with(LocalDensity.current) { position.x.toDp() - 10.dp }
             val offsetY = with(LocalDensity.current) { position.y.toDp() - 10.dp }
 
-            Image(
-                imageVector = Icons.Default.Favorite,
-                contentDescription = null,
+            Box(
                 modifier = Modifier
                     .offset(offsetX, offsetY)
+                    .alpha(alpha)
                     .size(20.dp)
-            )
+                    .drawBehind {
+                        val endOffset = Offset(this.size.width, this.size.height)
+
+                        drawCircle(
+                            color = Color.Red,
+                            center = Offset(endOffset.x / 3, endOffset.y / 3),
+                            radius = 4.dp.toPx()
+                        )
+
+                        drawCircle(
+                            color = Color.Blue,
+                            center = Offset(endOffset.x * 2 / 3, endOffset.y * 2 / 3),
+                            radius = 4.dp.toPx()
+                        )
+                    }
+            ) {
+
+            }
         }
     }
 }
 
 
-fun getExplodingHeartOffset(heartCount: Int, size: IntSize): List<Offset> {
+fun getConffetiOffset(heartCount: Int, size: Size, radius: Float): List<Offset> {
 
     val theta = PI * 2 / heartCount
 
-    var currentAngle = theta
+    var currentAngle = 0.0
 
     val centerX = size.width / 2
     val centerY = size.height / 2
-
-    val radius = minOf(centerX, centerY)
 
     val list = mutableListOf<Offset>()
 

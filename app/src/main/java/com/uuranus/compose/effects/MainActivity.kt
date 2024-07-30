@@ -79,10 +79,16 @@ class MainActivity : ComponentActivity() {
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
+                    color = MaterialTheme.colorScheme.background,
+                    ) {
 
-                    InstagramSearchTab()
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        TwitterHeartMotion()
+                    }
 
                 }
             }

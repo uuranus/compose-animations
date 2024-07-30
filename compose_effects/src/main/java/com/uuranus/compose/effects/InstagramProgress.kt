@@ -51,12 +51,13 @@ val colorList = listOf(
 fun InstagramProgress(
     isComplete: Boolean,
 ) {
-    val rotationAnimation = remember { Animatable(0f) }
-    val rotation by remember { derivedStateOf { rotationAnimation.value % 360f } }
 
     val scope = rememberCoroutineScope()
 
     val rotateDuration = 500
+
+    val rotationAnimation = remember { Animatable(0f) }
+    val rotation by remember { derivedStateOf { rotationAnimation.value % 360f } }
 
     LaunchedEffect(isComplete) {
         if (isComplete) {
@@ -65,7 +66,8 @@ fun InstagramProgress(
                 rotationAnimation.animateTo(
                     targetValue = remainAngle,
                     animationSpec = tween(
-                        durationMillis = (360f - rotation).toInt() * (rotateDuration / 360f).toInt(),
+                        durationMillis = (360f - rotation).toInt()
+                                * (rotateDuration / 360f).toInt(),
                         easing = LinearEasing
                     )
                 )
@@ -83,8 +85,8 @@ fun InstagramProgress(
                 }
             }
         }
-
     }
+
 
     Box(
         modifier = Modifier
