@@ -1,8 +1,11 @@
 package com.uuranus.compose.effects
 
+import android.content.res.Resources
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
@@ -42,24 +45,28 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.uuranus.variousshapes.RingShape
 import kotlinx.coroutines.launch
 import kotlin.math.PI
 import kotlin.math.cos
+import kotlin.math.min
 import kotlin.math.sin
+import kotlin.random.Random
 
 @Composable
 fun TwitterHeartMotion(modifier: Modifier = Modifier) {
     var isLiked by remember { mutableStateOf(false) }
     var isHeartScaleStart by remember { mutableStateOf(false) }
 
-    val circleSizeDuration = 1000
-    val heartSizeDuration = 1000
+    val circleSizeDuration = 200
+    val heartSizeDuration = 200
+    val confettiDuration = 800
 
     var size by remember {
-        mutableStateOf(IntSize.Zero )
+        mutableStateOf(IntSize.Zero)
     }
 
     var circleScale by remember { mutableFloatStateOf(0f) }
@@ -68,8 +75,14 @@ fun TwitterHeartMotion(modifier: Modifier = Modifier) {
         androidx.compose.animation.Animatable(Color(0xFFEB2E68))
     }
     var ringWidth by remember { mutableFloatStateOf(25f) }
-    var confettiAlpha by remember { mutableFloatStateOf(1f) }
-    var confettiRadius by remember { mutableFloatStateOf(size.width.toFloat()) }
+    var confettiScale by remember { mutableFloatStateOf(1f) }
+
+    var firstConfettiRadius by remember { mutableFloatStateOf(size.width.toFloat()) }
+    var secondConfettiRadius by remember { mutableFloatStateOf(size.width.toFloat()) }
+
+    val heartSize = with(LocalDensity.current) {
+        50.dp.toPx()
+    }
 
     LaunchedEffect(isLiked) {
         if (isLiked) {
@@ -104,8 +117,21 @@ fun TwitterHeartMotion(modifier: Modifier = Modifier) {
             launch {
                 animate(
                     initialValue = 0f,
+                    targetValue = 0.9f,
+                    animationSpec = tween(
+                        durationMillis = heartSizeDuration,
+                        easing = LinearEasing
+                    )
+                ) { value, _ ->
+                    heartScale = value
+                }
+                animate(
+                    initialValue = 0.9f,
                     targetValue = 1f,
-                    animationSpec = tween(heartSizeDuration, easing = LinearEasing)
+                    animationSpec = spring(
+                        dampingRatio = 0.2f,
+                        stiffness = 400f
+                    )
                 ) { value, _ ->
                     heartScale = value
                 }
@@ -123,23 +149,31 @@ fun TwitterHeartMotion(modifier: Modifier = Modifier) {
                 animate(
                     initialValue = 1f,
                     targetValue = 0f,
-                    animationSpec = tween(heartSizeDuration, easing = LinearEasing)
+                    animationSpec = tween(confettiDuration, easing = LinearEasing)
                 ) { value, _ ->
-                    confettiAlpha = value
+                    confettiScale = value
                 }
             }
             launch {
                 animate(
-                    initialValue = size.width / 2f,
-                    targetValue = (size.width / 2f) * 1.5f,
-                    animationSpec = tween(heartSizeDuration, easing = LinearEasing)
+                    initialValue = (heartSize / 2) * 1.5f,
+                    targetValue = (heartSize / 2) * 2f,
+                    animationSpec = tween(confettiDuration, easing = LinearEasing)
                 ) { value, _ ->
-                    confettiRadius = value
+                    firstConfettiRadius = value
+                }
+            }
+            launch {
+                animate(
+                    initialValue = (heartSize / 2) * 1.5f,
+                    targetValue = (heartSize / 2) * 2.5f,
+                    animationSpec = tween(confettiDuration, easing = LinearEasing)
+                ) { value, _ ->
+                    secondConfettiRadius = value
                 }
             }
 
         } else {
-
             heartScale = 0f
             ringWidth = 25f
         }
@@ -156,14 +190,13 @@ fun TwitterHeartMotion(modifier: Modifier = Modifier) {
                 .onGloballyPositioned {
                     size = it.size
                 }
-                .clickable {
-                    isLiked = !isLiked
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        isLiked = !isLiked
+                    })
                 },
             contentAlignment = Alignment.Center
         ) {
-            val heartSize = with(LocalDensity.current) {
-                50.dp.toPx()
-            }
             if (isLiked) {
                 Box(
                     modifier = Modifier
@@ -179,8 +212,9 @@ fun TwitterHeartMotion(modifier: Modifier = Modifier) {
 
                 ConfettiEffect(
                     size = Size(heartSize, heartSize),
-                    alpha = confettiAlpha,
-                    radius = confettiRadius
+                    scale = confettiScale,
+                    firstConfettiRadius = firstConfettiRadius,
+                    secondConfettiRadius = secondConfettiRadius
                 )
 
                 Image(
@@ -208,25 +242,23 @@ fun TwitterHeartMotion(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ConfettiEffect(size: Size, alpha: Float, radius: Float) {
+fun ConfettiEffect(
+    size: Size,
+    scale: Float,
+    firstConfettiRadius: Float,
+    secondConfettiRadius: Float,
+) {
     val heartCount = 7
 
-    val animatables = remember {
-        mutableStateOf(getConffetiOffset(heartCount, size, radius).map {
-            Animatable(it, Offset.VectorConverter)
-        })
-    }
+    val confettiDuration = 800
 
-    println("targetValue ${animatables.value.joinToString(" ")}")
+    val confettiOffsets =
+        getConffetiAngles(heartCount)
+    val confettiColors = getPairedColors()
 
-    LaunchedEffect(Unit) {
-        animatables.value.forEachIndexed { index, animatable ->
-            launch {
-                animatable.animateTo(
-                    animatable.targetValue,
-                    animationSpec = tween(1000, easing = FastOutSlowInEasing)
-                )
-            }
+    val confettiAnimatableColor = remember {
+        confettiColors.map {
+            androidx.compose.animation.Animatable(it.first)
         }
     }
 
@@ -237,62 +269,75 @@ fun ConfettiEffect(size: Size, alpha: Float, radius: Float) {
         size.height.toDp()
     }
 
+
+    LaunchedEffect("confettiColor") {
+        confettiAnimatableColor.forEachIndexed { index, animatable ->
+            launch {
+                launch {
+                    animatable.animateTo(
+                        confettiColors[index].second,
+                        animationSpec = tween(confettiDuration, easing = EaseOut)
+                    )
+                }
+            }
+        }
+
+    }
+
     Box(
         modifier = Modifier
             .width(width)
             .height(height)
     ) {
-        animatables.value.forEach { animatable ->
-            val position by animatable.asState()
-            val offsetX = with(LocalDensity.current) { position.x.toDp() - 10.dp }
-            val offsetY = with(LocalDensity.current) { position.y.toDp() - 10.dp }
+        confettiOffsets.forEachIndexed { index, angle ->
+
+            val offsetX = if (index % 2 == 0) {
+                width / 2 + (firstConfettiRadius * sin(angle)).toDp() - 3.dp
+            } else {
+                width / 2 + (secondConfettiRadius * sin(angle)).toDp() - 3.dp
+            }
+            val offsetY = if (index % 2 == 0) {
+                height / 2 - (firstConfettiRadius * cos(angle)).toDp() - 3.dp
+            } else {
+                height / 2 - (secondConfettiRadius * cos(angle)).toDp() - 3.dp
+            }
 
             Box(
                 modifier = Modifier
                     .offset(offsetX, offsetY)
-                    .alpha(alpha)
-                    .size(20.dp)
-                    .drawBehind {
-                        val endOffset = Offset(this.size.width, this.size.height)
+                    .scale(scale)
+                    .size(6.dp)
+                    .clip(
+                        shape = CircleShape
+                    )
+                    .background(confettiAnimatableColor[index].value)
 
-                        drawCircle(
-                            color = Color.Red,
-                            center = Offset(endOffset.x / 3, endOffset.y / 3),
-                            radius = 4.dp.toPx()
-                        )
-
-                        drawCircle(
-                            color = Color.Blue,
-                            center = Offset(endOffset.x * 2 / 3, endOffset.y * 2 / 3),
-                            radius = 4.dp.toPx()
-                        )
-                    }
-            ) {
-
-            }
+            )
         }
     }
 }
 
 
-fun getConffetiOffset(heartCount: Int, size: Size, radius: Float): List<Offset> {
+fun getConffetiAngles(
+    heartCount: Int,
+): List<Double> {
 
     val theta = PI * 2 / heartCount
 
     var currentAngle = 0.0
 
-    val centerX = size.width / 2
-    val centerY = size.height / 2
+    val list = mutableListOf<Double>()
 
-    val list = mutableListOf<Offset>()
+    val diffAngle = PI / 36
 
     repeat(heartCount) {
 
         list.add(
-            Offset(
-                centerX + radius * cos(currentAngle).toFloat(),
-                centerY - radius * sin(currentAngle).toFloat()
+            currentAngle - diffAngle,
+
             )
+        list.add(
+            currentAngle + diffAngle,
         )
 
         currentAngle += theta
@@ -355,3 +400,43 @@ fun InstagramHeartMotion(modifier: Modifier = Modifier, onHeartClick: (Boolean) 
     }
 
 }
+
+fun getPairedColors(): List<Pair<Color, Color>> {
+    val image1Colors = listOf(
+        Color(0xFF98D6E8), // Light Blue
+        Color(0xFF98D6E8), // Light Blue
+        Color(0xFFE28A98), // Light Pink
+        Color(0xFFE28A98), // Light Pink
+        Color(0xFFB190E3), // Light Purple
+        Color(0xFFB190E3), // Light Purple
+        Color(0xFFA3E7B6), // Light Green
+        Color(0xFFA3E7B6), // Light Green
+        Color(0xFFCACBFD), // Light Purple
+        Color(0xFFCACBFD), // Light Purple
+        Color(0xFF8BC8F9), // Light Blue
+        Color(0xFF8BC8F9), // Light Blue
+        Color(0xFFDBA4F5), // Light Purple
+        Color(0xFFDBA4F5)  // Light Purple
+    )
+
+    val image2Colors = listOf(
+        Color(0xFF98D6E8), // Light Blue
+        Color(0xFF98D6E8), // Light Blue
+        Color(0xFFB190E3), // Light Purple
+        Color(0xFFB190E3), // Light Purple
+        Color(0xFFF2B2B3), // Light Red
+        Color(0xFFF2B2B3), // Light Red
+        Color(0xFFCFE0B1), // Light Green
+        Color(0xFFCFE0B1), // Light Green
+        Color(0xFFEDC8E3), // Light Pink
+        Color(0xFFEDC8E3), // Light Pink
+        Color(0xFF8CCBF3), // Light Blue
+        Color(0xFF8CCBF3), // Light Blue
+        Color(0xFFE5C1F5), // Light Purple
+        Color(0xFFE5C1F5)  // Light Purple
+    )
+
+    return image1Colors.zip(image2Colors)
+}
+
+fun Double.toDp(): Dp = (this / Resources.getSystem().displayMetrics.density).dp
