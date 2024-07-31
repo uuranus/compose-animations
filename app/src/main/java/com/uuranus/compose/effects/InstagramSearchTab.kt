@@ -208,7 +208,7 @@ fun FeedReaction(isLiked: Boolean, onHearClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        InstagramHeartMotion(
+        InstagramLikeButton(
             modifier = Modifier.size(40.dp),
             isLiked = isLiked
         ) {
@@ -217,7 +217,7 @@ fun FeedReaction(isLiked: Boolean, onHearClick: () -> Unit) {
 
         Spacer(modifier = Modifier.width(8.dp))
         Image(
-            painter = painterResource(id = R.drawable.ic_reels_comment),
+            painter = painterResource(id = com.uuranus.compose.effects.R.drawable.ic_reels_comment),
             contentDescription = null,
             colorFilter = ColorFilter.tint(color = Color.Black),
             modifier = Modifier
@@ -225,7 +225,7 @@ fun FeedReaction(isLiked: Boolean, onHearClick: () -> Unit) {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Image(
-            painter = painterResource(id = R.drawable.ic_reels_send),
+            painter = painterResource(id = com.uuranus.compose.effects.R.drawable.ic_reels_send),
             contentDescription = null,
             colorFilter = ColorFilter.tint(color = Color.Black),
             modifier = Modifier
@@ -235,7 +235,7 @@ fun FeedReaction(isLiked: Boolean, onHearClick: () -> Unit) {
         Spacer(modifier = Modifier.weight(1f))
 
         Image(
-            painter = painterResource(id = R.drawable.ic_bookmark_white),
+            painter = painterResource(id = com.uuranus.compose.effects.R.drawable.ic_bookmark_white),
             contentDescription = null,
             colorFilter = ColorFilter.tint(color = Color.Black),
             modifier = Modifier
