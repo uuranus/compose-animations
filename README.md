@@ -14,8 +14,7 @@ Various Useful Effects  with Jetpack Compose
 # X (Twitter)
 |heart|
 |:--:|
-|<img src = "https://github.com/user-attachments/assets/ab48db65-df04-4355-9ad1-087235e32414" width = "250">|
-
+|<img src = "https://github.com/user-attachments/assets/f59c9721-af26-4544-a288-d61b89240615" width = "250">|
 
 # WaterFill
 |basic|
