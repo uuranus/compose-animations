@@ -27,7 +27,7 @@ InstagramProgress(
 <td>
   
 ```kotlin
-InstagramHeartMotion(
+InstagramLikeButton(
     modifier = Modifier
         .fillMaxSize()
         .padding(32.dp),
