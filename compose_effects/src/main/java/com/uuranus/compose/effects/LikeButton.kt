@@ -5,14 +5,11 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +23,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -33,11 +31,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -52,18 +47,38 @@ import com.uuranus.variousshapes.RingShape
 import kotlinx.coroutines.launch
 import kotlin.math.PI
 import kotlin.math.cos
-import kotlin.math.min
 import kotlin.math.sin
-import kotlin.random.Random
+
+data class ColorChange(
+    val before: Color,
+    val after: Color,
+)
 
 @Composable
-fun TwitterHeartMotion(modifier: Modifier = Modifier) {
-    var isLiked by remember { mutableStateOf(false) }
+fun TwitterLikeButton(
+    modifier: Modifier = Modifier,
+    isLiked: Boolean,
+    likeColor: Color = Color(0xFFFF1B81),
+    unlikeColor: Color = Color.DarkGray,
+    circleColor: ColorChange = ColorChange(Color(0xFFEB2E68), Color(0xFFD38CF1)),
+    confettiColors: List<ColorChange> = getPairedColors(),
+    onClick: () -> Unit,
+) {
+
+    require(confettiColors.isNotEmpty()) {
+        "At least two colors are required for the confetti."
+    }
+    require(confettiColors.size % 2 == 0) {
+        "Confetti requires an even number of colors. Please provide at least two colors."
+    }
+
     var isHeartScaleStart by remember { mutableStateOf(false) }
 
     val circleSizeDuration = 200
     val heartSizeDuration = 200
-    val confettiDuration = 800
+    val firstConfettiScaleDuration = 500
+    val secondConfettiScaleDuration = 800
+    val confettiRadiusDuration = 800
 
     var size by remember {
         mutableStateOf(IntSize.Zero)
@@ -72,17 +87,46 @@ fun TwitterHeartMotion(modifier: Modifier = Modifier) {
     var circleScale by remember { mutableFloatStateOf(0f) }
     var heartScale by remember { mutableFloatStateOf(0f) }
     var notLikedHeartScale by remember { mutableFloatStateOf(0f) }
-    val circleColor = remember {
-        androidx.compose.animation.Animatable(Color(0xFFEB2E68))
+    val circleColorAnimatable = remember {
+        androidx.compose.animation.Animatable(circleColor.before)
     }
-    var ringWidth by remember { mutableFloatStateOf(25f) }
-    var confettiScale by remember { mutableFloatStateOf(1f) }
+    var firstConfettiScale by remember { mutableFloatStateOf(1f) }
+    var secondConfettiScale by remember { mutableFloatStateOf(1f) }
 
     var firstConfettiRadius by remember { mutableFloatStateOf(size.width.toFloat()) }
     var secondConfettiRadius by remember { mutableFloatStateOf(size.width.toFloat()) }
 
-    val heartSize = with(LocalDensity.current) {
-        50.dp.toPx()
+    val density = LocalDensity.current
+    val heartSizeDp = remember {
+        derivedStateOf {
+            minOf(size.width, size.height).toDp()
+        }
+    }
+
+    val heartSizePx by remember {
+        derivedStateOf {
+            with(density) {
+                heartSizeDp.value.toPx()
+            }
+        }
+    }
+
+    val ringWidthMax by remember {
+        derivedStateOf {
+            heartSizePx / 2f
+        }
+    }
+
+    var ringWidth by remember {
+        mutableFloatStateOf(ringWidthMax)
+    }
+
+    val ringWidthDp by remember(ringWidth) {
+        derivedStateOf {
+            with(density) {
+                ringWidth.toDp()
+            }
+        }
     }
 
     LaunchedEffect(isLiked) {
@@ -100,15 +144,14 @@ fun TwitterHeartMotion(modifier: Modifier = Modifier) {
                     }
                 }
             }
-            circleColor.snapTo(Color(0xFFEB2E68))
+            circleColorAnimatable.snapTo(circleColor.before)
             launch {
-                circleColor.animateTo(
-                    Color(0xFFD38CF1),
+                circleColorAnimatable.animateTo(
+                    circleColor.after,
                     animationSpec = tween(circleSizeDuration, easing = LinearEasing)
                 )
             }
         } else {
-
             animate(
                 initialValue = 1.5f,
                 targetValue = 1f,
@@ -122,7 +165,6 @@ fun TwitterHeartMotion(modifier: Modifier = Modifier) {
             isHeartScaleStart = false
 
         }
-
     }
 
     LaunchedEffect(isHeartScaleStart) {
@@ -151,7 +193,7 @@ fun TwitterHeartMotion(modifier: Modifier = Modifier) {
             }
             launch {
                 animate(
-                    initialValue = 25f,
+                    initialValue = ringWidthMax,
                     targetValue = 0f,
                     animationSpec = tween(heartSizeDuration, easing = LinearEasing)
                 ) { value, _ ->
@@ -162,25 +204,34 @@ fun TwitterHeartMotion(modifier: Modifier = Modifier) {
                 animate(
                     initialValue = 1f,
                     targetValue = 0f,
-                    animationSpec = tween(confettiDuration, easing = LinearEasing)
+                    animationSpec = tween(firstConfettiScaleDuration, easing = LinearEasing)
                 ) { value, _ ->
-                    confettiScale = value
+                    firstConfettiScale = value
                 }
             }
             launch {
                 animate(
-                    initialValue = (heartSize / 2) * 1.5f,
-                    targetValue = (heartSize / 2) * 2f,
-                    animationSpec = tween(confettiDuration, easing = LinearEasing)
+                    initialValue = 1f,
+                    targetValue = 0f,
+                    animationSpec = tween(secondConfettiScaleDuration, easing = LinearEasing)
+                ) { value, _ ->
+                    secondConfettiScale = value
+                }
+            }
+            launch {
+                animate(
+                    initialValue = (heartSizePx / 2) * 1.5f,
+                    targetValue = (heartSizePx / 2) * 2f,
+                    animationSpec = tween(confettiRadiusDuration, easing = LinearEasing)
                 ) { value, _ ->
                     firstConfettiRadius = value
                 }
             }
             launch {
                 animate(
-                    initialValue = (heartSize / 2) * 1.5f,
-                    targetValue = (heartSize / 2) * 2.5f,
-                    animationSpec = tween(confettiDuration, easing = LinearEasing)
+                    initialValue = (heartSizePx / 2) * 1.5f,
+                    targetValue = (heartSizePx / 2) * 2.5f,
+                    animationSpec = tween(confettiRadiusDuration, easing = LinearEasing)
                 ) { value, _ ->
                     secondConfettiRadius = value
                 }
@@ -188,91 +239,84 @@ fun TwitterHeartMotion(modifier: Modifier = Modifier) {
 
         } else {
             heartScale = 0f
-            ringWidth = 25f
+            ringWidth = ringWidthMax
         }
     }
 
     Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Box(
-            modifier = Modifier
-                .width(50.dp)
-                .height(50.dp)
-                .onGloballyPositioned {
-                    size = it.size
-                }
-                .pointerInput(Unit) {
-                    detectTapGestures(onTap = {
-                        isLiked = !isLiked
-                    })
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            if (isLiked) {
-                Box(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .scale(circleScale)
-                        .clip(
-                            shape = RingShape(ringWidth = ringWidth.dp)
-                        )
-                        .background(
-                            color = circleColor.value
-                        )
-                )
-
-                ConfettiEffect(
-                    size = Size(heartSize, heartSize),
-                    scale = confettiScale,
-                    firstConfettiRadius = firstConfettiRadius,
-                    secondConfettiRadius = secondConfettiRadius
-                )
-
-                Image(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "Heart",
-                    colorFilter = ColorFilter.tint(Color(0xFFFF1B81)),
-                    modifier = Modifier
-                        .scale(heartScale)
-                        .size(50.dp)
-                )
-            } else {
-                Image(
-                    imageVector = Icons.Default.FavoriteBorder,
-                    contentDescription = "Heart",
-                    colorFilter = ColorFilter.tint(color = Color.DarkGray),
-                    modifier = Modifier
-                        .scale(notLikedHeartScale)
-                        .size(50.dp)
-                )
+        modifier = modifier
+            .onGloballyPositioned {
+                size = it.size
             }
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    onClick()
+                })
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        if (isLiked) {
+            Box(
+                modifier = Modifier
+                    .size(heartSizeDp.value)
+                    .scale(circleScale)
+                    .clip(
+                        shape = RingShape(ringWidth = ringWidthDp)
+                    )
+                    .background(
+                        color = circleColorAnimatable.value
+                    )
+            )
 
+            ConfettiEffect(
+                size = Size(heartSizePx, heartSizePx),
+                firstConfettiScale = firstConfettiScale,
+                secondConfettiScale = secondConfettiScale,
+                firstConfettiRadius = firstConfettiRadius,
+                secondConfettiRadius = secondConfettiRadius,
+                confettiColors = confettiColors,
+            )
+
+            Image(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = "Heart",
+                colorFilter = ColorFilter.tint(likeColor),
+                modifier = Modifier
+                    .scale(heartScale)
+                    .size(heartSizeDp.value)
+            )
+        } else {
+            Image(
+                imageVector = Icons.Default.FavoriteBorder,
+                contentDescription = "Heart",
+                colorFilter = ColorFilter.tint(color = unlikeColor),
+                modifier = Modifier
+                    .scale(notLikedHeartScale)
+                    .size(heartSizeDp.value)
+            )
         }
-
     }
-
 }
 
 @Composable
-fun ConfettiEffect(
+private fun ConfettiEffect(
     size: Size,
-    scale: Float,
+    firstConfettiScale: Float,
+    secondConfettiScale: Float,
     firstConfettiRadius: Float,
     secondConfettiRadius: Float,
+    confettiColors: List<ColorChange>,
 ) {
-    val heartCount = 7
+    val heartCount = confettiColors.size / 2
 
     val confettiDuration = 800
 
     val confettiOffsets =
         getConffetiAngles(heartCount)
-    val confettiColors = getPairedColors()
 
     val confettiAnimatableColor = remember {
         confettiColors.map {
-            androidx.compose.animation.Animatable(it.first)
+            androidx.compose.animation.Animatable(it.before)
         }
     }
 
@@ -283,19 +327,17 @@ fun ConfettiEffect(
         size.height.toDp()
     }
 
-
     LaunchedEffect("confettiColor") {
         confettiAnimatableColor.forEachIndexed { index, animatable ->
             launch {
                 launch {
                     animatable.animateTo(
-                        confettiColors[index].second,
+                        confettiColors[index].after,
                         animationSpec = tween(confettiDuration, easing = EaseOut)
                     )
                 }
             }
         }
-
     }
 
     Box(
@@ -319,7 +361,7 @@ fun ConfettiEffect(
             Box(
                 modifier = Modifier
                     .offset(offsetX, offsetY)
-                    .scale(scale)
+                    .scale(if (index % 2 == 0) firstConfettiScale else secondConfettiScale)
                     .size(6.dp)
                     .clip(
                         shape = CircleShape
@@ -332,7 +374,7 @@ fun ConfettiEffect(
 }
 
 
-fun getConffetiAngles(
+private fun getConffetiAngles(
     heartCount: Int,
 ): List<Double> {
 
@@ -361,61 +403,7 @@ fun getConffetiAngles(
 }
 
 
-@Composable
-fun InstagramHeartMotion(modifier: Modifier = Modifier, onHeartClick: (Boolean) -> Unit) {
-
-    var isLiked by remember {
-        mutableStateOf(false)
-    }
-
-    val scaleAnimatable = remember { Animatable(1f) }
-
-    LaunchedEffect(isLiked) {
-        if (isLiked) {
-            scaleAnimatable.snapTo(1f)
-        } else {
-            scaleAnimatable.animateTo(
-                targetValue = 0.7f,
-                animationSpec = tween(
-                    durationMillis = 50,
-                    easing = FastOutSlowInEasing
-                )
-            )
-            scaleAnimatable.animateTo(
-                targetValue = 1f,
-                animationSpec = spring(
-                    dampingRatio = 1.0f,
-                    stiffness = 8000f
-                )
-            )
-        }
-    }
-
-    val scale by scaleAnimatable.asState()
-
-    Box(
-        modifier = modifier.size(100.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(id = if (isLiked) R.drawable.favorite_fill else R.drawable.favorite_outline),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(color = if (isLiked) Color(0xFFFF0A2F) else Color.Black),
-            modifier = Modifier
-                .size(100.dp)
-                .scale(scale)
-                .pointerInput(Unit) {
-                    detectTapGestures(onTap = {
-                        isLiked = !isLiked
-                        onHeartClick(isLiked)
-                    })
-                }
-        )
-    }
-
-}
-
-fun getPairedColors(): List<Pair<Color, Color>> {
+private fun getPairedColors(): List<ColorChange> {
     val image1Colors = listOf(
         Color(0xFF98D6E8), // Light Blue
         Color(0xFF98D6E8), // Light Blue
@@ -450,7 +438,61 @@ fun getPairedColors(): List<Pair<Color, Color>> {
         Color(0xFFE5C1F5)  // Light Purple
     )
 
-    return image1Colors.zip(image2Colors)
+    return image1Colors.zip(image2Colors).map {
+        ColorChange(it.first, it.second)
+    }
 }
 
-fun Double.toDp(): Dp = (this / Resources.getSystem().displayMetrics.density).dp
+@Composable
+fun InstagramLikeButton(
+    modifier: Modifier = Modifier,
+    isLiked: Boolean,
+    onClick: () -> Unit,
+) {
+
+    val scaleAnimatable = remember { Animatable(1f) }
+
+    LaunchedEffect(isLiked) {
+        if (isLiked) {
+            scaleAnimatable.snapTo(1f)
+        } else {
+            scaleAnimatable.animateTo(
+                targetValue = 0.7f,
+                animationSpec = tween(
+                    durationMillis = 50,
+                    easing = FastOutSlowInEasing
+                )
+            )
+            scaleAnimatable.animateTo(
+                targetValue = 1f,
+                animationSpec = spring(
+                    dampingRatio = 1.0f,
+                    stiffness = 8000f
+                )
+            )
+        }
+    }
+
+    val scale by scaleAnimatable.asState()
+
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(id = if (isLiked) R.drawable.favorite_fill else R.drawable.favorite_outline),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(color = if (isLiked) Color(0xFFFF0A2F) else Color.Black),
+            modifier = Modifier
+                .fillMaxSize()
+                .scale(scale)
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        onClick()
+                    })
+                }
+        )
+    }
+}
+
+private fun Double.toDp(): Dp = (this / Resources.getSystem().displayMetrics.density).dp

@@ -122,6 +122,10 @@ fun InstagramFeed(modifier: Modifier = Modifier) {
         mutableIntStateOf(4797)
     }
 
+    var isLiked by remember {
+        mutableStateOf(false)
+    }
+
     Column(modifier = modifier) {
         FeedHeader(
             modifier = Modifier.fillMaxWidth()
@@ -136,7 +140,11 @@ fun InstagramFeed(modifier: Modifier = Modifier) {
             contentScale = ContentScale.Crop
         )
 
-        FeedReaction { isLiked ->
+        FeedReaction(
+            isLiked = isLiked
+        ) {
+            isLiked = !isLiked
+
             heartCount = if (isLiked) heartCount + 1
             else heartCount - 1
         }
@@ -192,7 +200,7 @@ fun FeedHeader(modifier: Modifier = Modifier) {
 
 
 @Composable
-fun FeedReaction(onHearClick: (Boolean) -> Unit) {
+fun FeedReaction(isLiked: Boolean, onHearClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -200,9 +208,11 @@ fun FeedReaction(onHearClick: (Boolean) -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-
-        InstagramHeartMotion(modifier = Modifier.size(40.dp)) { isLiked ->
-            onHearClick(isLiked)
+        InstagramHeartMotion(
+            modifier = Modifier.size(40.dp),
+            isLiked = isLiked
+        ) {
+            onHearClick()
         }
 
         Spacer(modifier = Modifier.width(8.dp))

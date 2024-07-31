@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.uuranus.variousshapes.RingShape
 import kotlinx.coroutines.launch
 
-val colorList = listOf(
+internal val instagramColorList = listOf(
     Color(0xFFFFD600),
     Color(0xFFFF7A00),
     Color(0xFFFF0069),
@@ -49,12 +49,13 @@ val colorList = listOf(
 
 @Composable
 fun InstagramProgress(
+    modifier: Modifier = Modifier,
     isComplete: Boolean,
+    colorList: List<Color> = instagramColorList,
+    rotateDuration: Int = 500,
 ) {
 
     val scope = rememberCoroutineScope()
-
-    val rotateDuration = 500
 
     val rotationAnimation = remember { Animatable(0f) }
     val rotation by remember { derivedStateOf { rotationAnimation.value % 360f } }
@@ -87,11 +88,8 @@ fun InstagramProgress(
         }
     }
 
-
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp)
+        modifier = modifier
             .graphicsLayer {
                 rotationZ = rotation
             }
@@ -113,7 +111,8 @@ fun InstagramProgress(
             CheckMarkAnimation(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(40.dp)
+                    .padding(40.dp),
+                colorList = colorList
             )
         }
 
@@ -123,7 +122,7 @@ fun InstagramProgress(
 
 
 @Composable
-private fun CheckMarkAnimation(modifier: Modifier) {
+private fun CheckMarkAnimation(modifier: Modifier, colorList: List<Color>) {
 
     val infiniteTransition = rememberInfiniteTransition(label = "pathLength")
     val pathLength by infiniteTransition.animateFloat(
@@ -154,14 +153,16 @@ private fun CheckMarkAnimation(modifier: Modifier) {
             contentAlignment = Alignment.Center
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
-                drawCheckMark(size, pathLength)
+                drawCheckMark(size, pathLength, colorList = colorList)
             }
         }
     }
 }
 
 private fun DrawScope.drawCheckMark(
-    size: Size, progress: Float,
+    size: Size,
+    progress: Float,
+    colorList: List<Color>,
 ) {
     val height = (size.width * 2 / 3).toInt()
     val width = size.width
