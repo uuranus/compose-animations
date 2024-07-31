@@ -1,5 +1,5 @@
-# compose-animation-playgroun
-Various Useful Effects  with Jetpack Compose
+# compose-animations
+A collection of animations from popular apps like Instagram, YouTube, and Twitter with Jetpack Compose
 
 # Instagram
 |pc upload complete| heart |
@@ -15,9 +15,3 @@ Various Useful Effects  with Jetpack Compose
 |heart|
 |:--:|
 |<img src = "https://github.com/user-attachments/assets/f59c9721-af26-4544-a288-d61b89240615" width = "250">|
-
-# WaterFill
-|basic|
-|:--:|
-|<img src = "https://github.com/user-attachments/assets/bb08c417-a2de-4dc6-a0a9-32e84d9ae0be" width = "250">|
-
