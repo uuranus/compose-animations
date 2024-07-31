@@ -71,6 +71,7 @@ fun TwitterHeartMotion(modifier: Modifier = Modifier) {
 
     var circleScale by remember { mutableFloatStateOf(0f) }
     var heartScale by remember { mutableFloatStateOf(0f) }
+    var notLikedHeartScale by remember { mutableFloatStateOf(0f) }
     val circleColor = remember {
         androidx.compose.animation.Animatable(Color(0xFFEB2E68))
     }
@@ -107,7 +108,19 @@ fun TwitterHeartMotion(modifier: Modifier = Modifier) {
                 )
             }
         } else {
+
+            animate(
+                initialValue = 1.5f,
+                targetValue = 1f,
+                animationSpec = tween(
+                    durationMillis = heartSizeDuration,
+                    easing = LinearEasing
+                )
+            ) { value, _ ->
+                notLikedHeartScale = value
+            }
             isHeartScaleStart = false
+
         }
 
     }
@@ -231,6 +244,7 @@ fun TwitterHeartMotion(modifier: Modifier = Modifier) {
                     contentDescription = "Heart",
                     colorFilter = ColorFilter.tint(color = Color.DarkGray),
                     modifier = Modifier
+                        .scale(notLikedHeartScale)
                         .size(50.dp)
                 )
             }
