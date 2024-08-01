@@ -53,6 +53,7 @@ fun GradientTransition(
         Color.Gray,
         Color.Magenta
     )
+
     var triggerAnimation by remember { mutableStateOf(false) }
 
     var width by remember {
@@ -74,7 +75,11 @@ fun GradientTransition(
             animate(
                 initialValue = 0f,
                 targetValue = 1f,
-                animationSpec = tween(durationMillis = 1000, easing = LinearEasing)
+                animationSpec =
+                tween(
+                    durationMillis = 1000,
+                    easing = LinearEasing
+                )
             ) { value, _ ->
                 animationProgress = value
             }
@@ -90,7 +95,10 @@ fun GradientTransition(
             .padding(16.dp)
     ) {
 
-        Text(text = "Theme Changing", fontSize = 32.sp, fontWeight = FontWeight.Bold)
+        Text(
+            text = "Theme Changing", fontSize = 32.sp,
+            fontWeight = FontWeight.Bold
+        )
         Spacer(modifier = Modifier.height(12.dp))
         LazyRow(
             modifier = Modifier
@@ -104,7 +112,10 @@ fun GradientTransition(
                     modifier = Modifier
                         .width(50.dp)
                         .aspectRatio(1f)
-                        .background(color = contents[it], shape = CircleShape)
+                        .background(
+                            color = contents[it],
+                            shape = CircleShape
+                        )
                         .clickable {
                             triggerAnimation = true
                             newColor = contents[it]
@@ -125,11 +136,13 @@ fun GradientTransition(
                 .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .background(
+
                         Brush.horizontalGradient(
                             colorStops = arrayOf(
                                 animationProgress to newColor,
@@ -139,34 +152,14 @@ fun GradientTransition(
                             tileMode = TileMode.Clamp
                         ),
                         shape = RoundedCornerShape(12.dp)
+
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 Text("Button", modifier = Modifier.padding(16.dp))
             }
+
         }
     }
 }
 
-@Composable
-fun MovingGradientBackground() {
-    val infiniteTransition = rememberInfiniteTransition(label = "")
-    val offset by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1000f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(10000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ), label = ""
-    )
-
-    val gradient = Brush.linearGradient(
-        colors = listOf(Color.Red, Color.Blue, Color.Green, Color.Yellow),
-        start = Offset(offset, 0f),
-        end = Offset(offset + 500f, 500f)
-    )
-
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        drawRect(brush = gradient)
-    }
-}
