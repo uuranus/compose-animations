@@ -5,10 +5,12 @@ A collection of animations from popular apps like Instagram, YouTube, and Twitte
 <table>
   <th>pc upload complete</th>
   <th>heart</th>
+  <th>dot indicator</th>
 
   <tr>
-    <td><img src = "https://github.com/user-attachments/assets/e9e452e5-3116-45b3-a701-6fbf08e9f463" width = "250"></td>
-    <td><img src = "https://github.com/user-attachments/assets/322e50d7-97a8-451b-ab1c-126bdb886cdd" width = "250"></td>
+    <td align="center"><img src = "https://github.com/user-attachments/assets/e9e452e5-3116-45b3-a701-6fbf08e9f463" width = "250"></td>
+    <td align="center"><img src = "https://github.com/user-attachments/assets/322e50d7-97a8-451b-ab1c-126bdb886cdd" width = "250"></td>
+    <td align="center"><img src = "https://github.com/user-attachments/assets/b9b12e44-5201-4718-8bd7-74bf2e083a8c" width = "250"></td>
   </tr>
 
   <tr>
@@ -39,6 +41,22 @@ InstagramLikeButton(
 ```
 
 </td>
+
+<td>
+  
+```kotlin
+InstagramDotIndicator(
+    modifier = Modifier
+        .fillMaxWidth()
+        .height(16.dp),
+    currentPage = currentPage,
+    totalPage = pageCount,
+    spacePadding = 8.dp
+)
+```
+
+</td>
+
   </tr>
   
 </table>
