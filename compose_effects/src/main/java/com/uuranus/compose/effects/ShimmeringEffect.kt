@@ -1,6 +1,7 @@
 package com.uuranus.compose.effects
 
 import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -24,8 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 
 @Composable
@@ -38,11 +37,7 @@ fun ShimmeringPlaceholder(
         mutableStateOf(IntSize.Zero)
     }
 
-    val shadowWidth = size.width / 4f
-
-    val shadowWidthDp = with(LocalDensity.current) {
-        shadowWidth.toDp()
-    }
+    val shimmeringWidth = size.width / 4f
 
     val placeholderColor = if (backgroundColor.luminance() > 0.5f) {
         Color(0xFFD3D3D3).copy(alpha = 0.6f)
@@ -61,27 +56,28 @@ fun ShimmeringPlaceholder(
             .background(placeholderColor)
             .shimmerEffect(
                 size = size,
-                shadowWidthDp = shadowWidthDp,
+                shimmeringWidthPx = shimmeringWidth,
                 placeholderColor = placeholderColor
             )
     )
 }
 
-fun Modifier.shimmerEffect(size: IntSize, shadowWidthDp: Dp, placeholderColor: Color): Modifier =
+fun Modifier.shimmerEffect(
+    size: IntSize,
+    shimmeringWidthPx: Float,
+    placeholderColor: Color,
+): Modifier =
     composed {
 
         val transition = rememberInfiniteTransition(label = "")
-        val shadowWidthPx = with(LocalDensity.current) {
-            shadowWidthDp.toPx()
-        }
 
         val startOffsetX by transition.animateFloat(
-            initialValue = -shadowWidthPx,
+            initialValue = -shimmeringWidthPx,
             targetValue = size.width.toFloat(),
             animationSpec = infiniteRepeatable(
                 animation = tween(
                     durationMillis = 1500,
-                    easing = EaseInOut
+                    easing = FastOutSlowInEasing
                 ),
             ),
             label = ""
@@ -100,18 +96,16 @@ fun Modifier.shimmerEffect(size: IntSize, shadowWidthDp: Dp, placeholderColor: C
                 shimmerColor.copy(alpha = 0.1f)
             ),
             startX = 0f,
-            endX = shadowWidthPx
+            endX = shimmeringWidthPx
         )
 
         graphicsLayer {
             translationX = startOffsetX
         }.drawWithContent {
-            val shimmerWidthPx = shadowWidthDp.toPx()
-
             drawRect(
                 brush = brush,
                 topLeft = Offset(x = 0f, y = 0f),
-                size = Size(shimmerWidthPx, size.height.toFloat())
+                size = Size(shimmeringWidthPx, size.height.toFloat())
             )
         }
     }
