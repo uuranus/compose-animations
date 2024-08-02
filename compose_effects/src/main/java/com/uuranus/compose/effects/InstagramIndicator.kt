@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.coerceAtMost
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -36,7 +37,6 @@ fun InstagramDotIndicator(
     modifier: Modifier = Modifier,
     currentPage: Int,
     totalPage: Int,
-    dotSize: Dp = 20.dp,
     spacePadding: Dp,
 ) {
     require(totalPage > 0) {
@@ -50,16 +50,19 @@ fun InstagramDotIndicator(
     var width by remember {
         mutableIntStateOf(0)
     }
+    var height by remember {
+        mutableIntStateOf(0)
+    }
 
     val maxPageDots = 7
 
     val density = LocalDensity.current
-    val finalDotSize by remember {
+    val dotSize by remember {
         derivedStateOf {
             with(density) {
                 minOf(
                     ((width - spacePadding.toPx() * (maxPageDots - 1)) / maxPageDots).toDp(),
-                    dotSize
+                    height.toDp()
                 )
             }
         }
@@ -129,6 +132,7 @@ fun InstagramDotIndicator(
     Box(
         modifier = modifier.onGloballyPositioned {
             width = it.size.width
+            height = it.size.height
         },
         contentAlignment = Alignment.Center
     ) {
@@ -156,7 +160,7 @@ fun InstagramDotIndicator(
                     Row {
                         Box(
                             modifier = Modifier
-                                .width(finalDotSize)
+                                .width(dotSize)
                                 .aspectRatio(1f)
                                 .scale(0f)
                                 .clip(CircleShape)
@@ -186,7 +190,7 @@ fun InstagramDotIndicator(
                 ) {
                     Box(
                         modifier = Modifier
-                            .width(finalDotSize)
+                            .width(dotSize)
                             .aspectRatio(1f)
                             .scale(dotScales[index])
                             .clip(CircleShape)
@@ -220,7 +224,7 @@ fun InstagramDotIndicator(
                     Row {
                         Box(
                             modifier = Modifier
-                                .width(finalDotSize)
+                                .width(dotSize)
                                 .aspectRatio(1f)
                                 .scale(0f)
                                 .clip(CircleShape)

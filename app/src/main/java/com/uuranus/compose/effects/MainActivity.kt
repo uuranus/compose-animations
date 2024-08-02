@@ -66,9 +66,6 @@ class MainActivity : ComponentActivity() {
                     Color.Magenta,
                     Color.Green,
                     Color.Cyan,
-                    Color.DarkGray,
-                    Color.Green,
-                    Color.Cyan,
                 )
 
                 val pageState = rememberPagerState(
@@ -97,19 +94,18 @@ class MainActivity : ComponentActivity() {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .aspectRatio(1f)
+                                    .height(50.dp)
                                     .background(pageColors[pageNum])
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(24.dp))
                         InstagramDotIndicator(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(20.dp),
+                                .height(16.dp),
                             currentPage = pageState.currentPage,
                             totalPage = pageState.pageCount,
-                            dotSize = 10.dp,
                             spacePadding = 8.dp
                         )
 
