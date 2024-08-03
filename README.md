@@ -96,7 +96,7 @@ ShimmeringPlaceholder(
   <th>heart</th>
   
   <tr>
-    <td align="center"><img src = "https://github.com/user-attachments/assets/a9a1d95f-45d4-4921-a5c7-88b9992d348b" width = "250"></td>
+    <td align="center"><img src = "https://github.com/user-attachments/assets/af59a028-b7cc-4e24-88a5-7bd62b5e557d" width = "250"></td>
   </tr>
 
   <tr>
