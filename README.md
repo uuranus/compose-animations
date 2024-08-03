@@ -9,7 +9,7 @@ A collection of animations from popular apps like Instagram, YouTube, and Twitte
 
   <tr>
     <td align="center"><img src = "https://github.com/user-attachments/assets/e9e452e5-3116-45b3-a701-6fbf08e9f463" width = "250"></td>
-    <td align="center"><img src = "https://github.com/user-attachments/assets/322e50d7-97a8-451b-ab1c-126bdb886cdd" width = "250"></td>
+    <td align="center"><img src = "https://github.com/user-attachments/assets/027a7934-3121-4ebb-a25d-3c7106252863" width = "250"></td>
     <td align="center"><img src = "https://github.com/user-attachments/assets/b9b12e44-5201-4718-8bd7-74bf2e083a8c" width = "250"></td>
   </tr>
 
