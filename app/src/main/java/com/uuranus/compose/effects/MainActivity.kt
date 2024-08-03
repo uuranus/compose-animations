@@ -8,23 +8,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -88,27 +86,35 @@ class MainActivity : ComponentActivity() {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
-                        HorizontalPager(
-                            state = pageState,
-                        ) { pageNum ->
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                                    .background(pageColors[pageNum])
-                            )
-                        }
+//                        HorizontalPager(
+//                            state = pageState,
+//                        ) { pageNum ->
+//                            Box(
+//                                modifier = Modifier
+//                                    .fillMaxWidth()
+//                                    .height(50.dp)
+//                                    .background(pageColors[pageNum])
+//                            )
+//                        }
+//
+//                        Spacer(modifier = Modifier.height(24.dp))
+//                        InstagramDotIndicator(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .height(12.dp),
+//                            currentPage = pageState.currentPage,
+//                            totalPage = pageState.pageCount,
+//                            spacePadding = 8.dp
+//                        )
 
-                        Spacer(modifier = Modifier.height(24.dp))
-                        InstagramDotIndicator(
+                        InstagramAndroidLikeButton(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .height(16.dp),
-                            currentPage = pageState.currentPage,
-                            totalPage = pageState.pageCount,
-                            spacePadding = 8.dp
-                        )
-
+                                .width(100.dp)
+                                .aspectRatio(1f),
+                            isLiked = isLiked,
+                        ) {
+                            isLiked = !isLiked
+                        }
 
                     }
                 }

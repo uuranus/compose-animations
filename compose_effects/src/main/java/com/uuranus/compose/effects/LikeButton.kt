@@ -59,7 +59,7 @@ fun TwitterLikeButton(
     modifier: Modifier = Modifier,
     isLiked: Boolean,
     likeColor: Color = Color(0xFFFF1B81),
-    unlikeColor: Color = Color.DarkGray,
+    unlikeColor: Color = Color(0xFF536471),
     circleColor: ColorChange = ColorChange(Color(0xFFEB2E68), Color(0xFFD38CF1)),
     confettiColors: List<ColorChange> = getPairedColors(),
     onClick: () -> Unit,
@@ -107,6 +107,14 @@ fun TwitterLikeButton(
         derivedStateOf {
             with(density) {
                 heartSizeDp.value.toPx()
+            }
+        }
+    }
+
+    val confettiRadius by remember {
+        derivedStateOf {
+            with(density) {
+                (heartSizePx / 20f).toDp()
             }
         }
     }
@@ -236,7 +244,6 @@ fun TwitterLikeButton(
                     secondConfettiRadius = value
                 }
             }
-
         } else {
             heartScale = 0f
             ringWidth = ringWidthMax
@@ -270,6 +277,7 @@ fun TwitterLikeButton(
 
             ConfettiEffect(
                 size = Size(heartSizePx, heartSizePx),
+                confettiRadius = confettiRadius,
                 firstConfettiScale = firstConfettiScale,
                 secondConfettiScale = secondConfettiScale,
                 firstConfettiRadius = firstConfettiRadius,
@@ -301,6 +309,7 @@ fun TwitterLikeButton(
 @Composable
 private fun ConfettiEffect(
     size: Size,
+    confettiRadius: Dp,
     firstConfettiScale: Float,
     secondConfettiScale: Float,
     firstConfettiRadius: Float,
@@ -348,21 +357,21 @@ private fun ConfettiEffect(
         confettiOffsets.forEachIndexed { index, angle ->
 
             val offsetX = if (index % 2 == 0) {
-                width / 2 + (firstConfettiRadius * sin(angle)).toDp() - 3.dp
+                width / 2 + (firstConfettiRadius * sin(angle)).toDp() - confettiRadius
             } else {
-                width / 2 + (secondConfettiRadius * sin(angle)).toDp() - 3.dp
+                width / 2 + (secondConfettiRadius * sin(angle)).toDp() - confettiRadius
             }
             val offsetY = if (index % 2 == 0) {
-                height / 2 - (firstConfettiRadius * cos(angle)).toDp() - 3.dp
+                height / 2 - (firstConfettiRadius * cos(angle)).toDp() - confettiRadius
             } else {
-                height / 2 - (secondConfettiRadius * cos(angle)).toDp() - 3.dp
+                height / 2 - (secondConfettiRadius * cos(angle)).toDp() - confettiRadius
             }
 
             Box(
                 modifier = Modifier
                     .offset(offsetX, offsetY)
                     .scale(if (index % 2 == 0) firstConfettiScale else secondConfettiScale)
-                    .size(6.dp)
+                    .size(confettiRadius * 2)
                     .clip(
                         shape = CircleShape
                     )
@@ -401,7 +410,6 @@ private fun getConffetiAngles(
 
     return list
 }
-
 
 private fun getPairedColors(): List<ColorChange> {
     val image1Colors = listOf(
@@ -444,7 +452,7 @@ private fun getPairedColors(): List<ColorChange> {
 }
 
 @Composable
-fun InstagramLikeButton(
+fun InstagramiOSLikeButton(
     modifier: Modifier = Modifier,
     isLiked: Boolean,
     onClick: () -> Unit,
@@ -471,6 +479,49 @@ fun InstagramLikeButton(
                 )
             )
         }
+    }
+
+    val scale by scaleAnimatable.asState()
+
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(id = if (isLiked) R.drawable.favorite_fill else R.drawable.favorite_outline),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(color = if (isLiked) Color(0xFFFF0A2F) else Color.Black),
+            modifier = Modifier
+                .fillMaxSize()
+                .scale(scale)
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        onClick()
+                    })
+                }
+        )
+    }
+}
+
+@Composable
+fun InstagramAndroidLikeButton(
+    modifier: Modifier = Modifier,
+    isLiked: Boolean,
+    onClick: () -> Unit,
+) {
+
+    val scaleAnimatable = remember { Animatable(1f) }
+
+    LaunchedEffect(isLiked) {
+        scaleAnimatable.snapTo(0f)
+
+        scaleAnimatable.animateTo(
+            targetValue = 1f,
+            animationSpec = spring(
+                dampingRatio = 0.4f,
+                stiffness = 400f,
+            )
+        )
     }
 
     val scale by scaleAnimatable.asState()

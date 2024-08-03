@@ -37,7 +37,7 @@ fun ShimmeringPlaceholder(
         mutableStateOf(IntSize.Zero)
     }
 
-    val shimmeringWidth = size.width / 4f
+    val shimmeringWidth = size.width / 3f
 
     val placeholderColor = if (backgroundColor.luminance() > 0.5f) {
         Color(0xFFD3D3D3).copy(alpha = 0.6f)

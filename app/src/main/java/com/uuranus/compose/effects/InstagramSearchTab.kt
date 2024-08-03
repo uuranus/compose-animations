@@ -208,7 +208,7 @@ fun FeedReaction(isLiked: Boolean, onHearClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        InstagramLikeButton(
+        InstagramiOSLikeButton(
             modifier = Modifier.size(40.dp),
             isLiked = isLiked
         ) {
