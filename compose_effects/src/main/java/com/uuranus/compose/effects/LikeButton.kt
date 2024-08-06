@@ -152,13 +152,6 @@ fun TwitterLikeButton(
                     }
                 }
             }
-            circleColorAnimatable.snapTo(circleColor.before)
-            launch {
-                circleColorAnimatable.animateTo(
-                    circleColor.after,
-                    animationSpec = tween(circleSizeDuration, easing = LinearEasing)
-                )
-            }
         } else {
             animate(
                 initialValue = 1.5f,
@@ -171,6 +164,7 @@ fun TwitterLikeButton(
                 notLikedHeartScale = value
             }
             isHeartScaleStart = false
+            circleColorAnimatable.snapTo(circleColor.before)
 
         }
     }
@@ -193,7 +187,7 @@ fun TwitterLikeButton(
                     targetValue = 1f,
                     animationSpec = spring(
                         dampingRatio = 0.2f,
-                        stiffness = 400f
+                        stiffness = 200f
                     )
                 ) { value, _ ->
                     heartScale = value
@@ -207,6 +201,12 @@ fun TwitterLikeButton(
                 ) { value, _ ->
                     ringWidth = value
                 }
+            }
+            launch {
+                circleColorAnimatable.animateTo(
+                    circleColor.after,
+                    animationSpec = tween(heartSizeDuration / 2, easing = LinearEasing)
+                )
             }
             launch {
                 animate(
@@ -316,12 +316,12 @@ private fun ConfettiEffect(
     secondConfettiRadius: Float,
     confettiColors: List<ColorChange>,
 ) {
-    val heartCount = confettiColors.size / 2
+    val conffetiCount = confettiColors.size / 2
 
     val confettiDuration = 800
 
     val confettiOffsets =
-        getConffetiAngles(heartCount)
+        getConffetiAngles(conffetiCount)
 
     val confettiAnimatableColor = remember {
         confettiColors.map {
@@ -384,10 +384,10 @@ private fun ConfettiEffect(
 
 
 private fun getConffetiAngles(
-    heartCount: Int,
+    count: Int,
 ): List<Double> {
 
-    val theta = PI * 2 / heartCount
+    val theta = PI * 2 / count
 
     var currentAngle = 0.0
 
@@ -395,7 +395,7 @@ private fun getConffetiAngles(
 
     val diffAngle = PI / 36
 
-    repeat(heartCount) {
+    repeat(count) {
 
         list.add(
             currentAngle - diffAngle,
@@ -487,10 +487,19 @@ fun InstagramiOSLikeButton(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
+
         Image(
-            painter = painterResource(id = if (isLiked) R.drawable.favorite_fill else R.drawable.favorite_outline),
+            painter = painterResource(
+                id =
+                if (isLiked) R.drawable.favorite_fill
+                else R.drawable.favorite_outline
+            ),
             contentDescription = null,
-            colorFilter = ColorFilter.tint(color = if (isLiked) Color(0xFFFF0A2F) else Color.Black),
+            colorFilter = ColorFilter.tint(
+                color =
+                if (isLiked) Color(0xFFFF0A2F)
+                else Color.Black
+            ),
             modifier = Modifier
                 .fillMaxSize()
                 .scale(scale)
@@ -500,6 +509,8 @@ fun InstagramiOSLikeButton(
                     })
                 }
         )
+
+
     }
 }
 

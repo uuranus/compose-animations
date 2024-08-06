@@ -149,7 +149,7 @@ private fun CheckMarkAnimation(modifier: Modifier, colorList: List<Color>) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(32.dp),
+                .padding(40.dp),
             contentAlignment = Alignment.Center
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
@@ -194,7 +194,7 @@ private fun DrawScope.drawCheckMark(
 
     drawPath(
         path = pathSegment,
-        brush = Brush.linearGradient(colorList),
+        color = colorList[colorList.size / 2],
         style = Stroke(
             width = 12.dp.toPx(),
             cap = StrokeCap.Round,

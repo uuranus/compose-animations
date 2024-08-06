@@ -1,5 +1,6 @@
 package com.uuranus.compose.effects
 
+import android.widget.Space
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,7 +48,11 @@ import java.text.DecimalFormat
 
 @Composable
 fun InstagramSearchTab() {
-    Column {
+    Column (
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ){
         CustomTopAppBar(
             title = {
                 Text(
@@ -66,11 +71,23 @@ fun InstagramSearchTab() {
         )
 
         LazyColumn {
-            items(3) {
+            item {
+                InstagramAOSFeed(modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight())
 
-                InstagramFeed(modifier = Modifier.fillMaxWidth())
             }
+
+            item {
+                InstagramiOSFeed(modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight())
+
+            }
+
+
         }
+
     }
 }
 
@@ -117,7 +134,7 @@ fun CustomTopAppBar(
 }
 
 @Composable
-fun InstagramFeed(modifier: Modifier = Modifier) {
+fun InstagramAOSFeed(modifier: Modifier = Modifier) {
     var heartCount by remember {
         mutableIntStateOf(4797)
     }
@@ -140,7 +157,45 @@ fun InstagramFeed(modifier: Modifier = Modifier) {
             contentScale = ContentScale.Crop
         )
 
-        FeedReaction(
+        FeedAOSReaction(
+            isLiked = isLiked
+        ) {
+            isLiked = !isLiked
+
+            heartCount = if (isLiked) heartCount + 1
+            else heartCount - 1
+        }
+
+        FeedComment(modifier = Modifier.fillMaxWidth(), heartCount)
+        Spacer(modifier = Modifier.height(24.dp))
+    }
+}
+
+@Composable
+fun InstagramiOSFeed(modifier: Modifier = Modifier) {
+    var heartCount by remember {
+        mutableIntStateOf(4797)
+    }
+
+    var isLiked by remember {
+        mutableStateOf(false)
+    }
+
+    Column(modifier = modifier) {
+        FeedHeader(
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Image(
+            painter = painterResource(id = R.drawable.cat),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f),
+            contentScale = ContentScale.Crop
+        )
+
+        FeediOSReaction(
             isLiked = isLiked
         ) {
             isLiked = !isLiked
@@ -198,9 +253,53 @@ fun FeedHeader(modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+fun FeedAOSReaction(isLiked: Boolean, onHearClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        InstagramAndroidLikeButton(
+            modifier = Modifier.size(40.dp),
+            isLiked = isLiked
+        ) {
+            onHearClick()
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+        Image(
+            painter = painterResource(id = com.uuranus.compose.effects.R.drawable.ic_reels_comment),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(color = Color.Black),
+            modifier = Modifier
+                .size(50.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Image(
+            painter = painterResource(id = com.uuranus.compose.effects.R.drawable.ic_reels_send),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(color = Color.Black),
+            modifier = Modifier
+                .size(36.dp)
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Image(
+            painter = painterResource(id = com.uuranus.compose.effects.R.drawable.ic_bookmark_white),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(color = Color.Black),
+            modifier = Modifier
+                .size(30.dp)
+        )
+    }
+}
 
 @Composable
-fun FeedReaction(isLiked: Boolean, onHearClick: () -> Unit) {
+fun FeediOSReaction(isLiked: Boolean, onHearClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
