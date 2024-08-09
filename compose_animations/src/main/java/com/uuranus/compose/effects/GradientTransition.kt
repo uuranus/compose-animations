@@ -1,9 +1,13 @@
 package com.uuranus.compose.effects
 
+import android.graphics.RuntimeShader
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -18,6 +22,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -34,14 +39,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
+import org.intellij.lang.annotations.Language
 
 @Composable
 fun GradientTransition(
@@ -163,3 +176,87 @@ fun GradientTransition(
     }
 }
 
+
+val transparent = Color.Transparent
+val yellow = Color(0xFFE9E649)
+val red = Color(0xFFFB4D46)
+
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Composable
+fun GradientShiningEffect(
+    isShining: Boolean,
+    size: IntSize,
+) {
+
+    var startX by remember { mutableFloatStateOf(-1f * size.width) }
+
+    LaunchedEffect(size) {
+        animate(
+            initialValue = -2f * size.width,
+            targetValue = 2f * size.width,
+            animationSpec = tween(
+                durationMillis = 6000,
+                easing = LinearEasing
+            )
+        ) { value, _ ->
+            startX = value
+        }
+    }
+
+
+    val colors = List(100) { index ->
+        val fraction = index / 99f
+        when {
+            index < 33 -> interpolateColor(
+                Color.Transparent,
+                red,
+                (index) /99f
+            )  // Transparent to Red
+            index < 66 -> interpolateColor(
+                red,
+                yellow,
+                (index -33) /66f
+            )  // Red to Yellow
+            else -> interpolateColor(
+                yellow,
+                Color.Transparent,
+                (index - 66) /99f
+            )  // Yellow to Transparent
+        }
+    }
+
+    val brush = Brush.linearGradient(
+        colors = colors,
+        start = Offset(startX, 0f),
+        end = Offset(startX + 2 * size.width.toFloat(), size.height.toFloat())
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = brush,
+            )
+    )
+
+}
+
+fun interpolateColor(startColor: Color, endColor: Color, fraction: Float): Color {
+    val startR = startColor.red
+    val startG = startColor.green
+    val startB = startColor.blue
+    val startA = startColor.alpha
+
+    val endR = endColor.red
+    val endG = endColor.green
+    val endB = endColor.blue
+    val endA = endColor.alpha
+
+    val r = startR + (endR - startR) * fraction
+    val g = startG + (endG - startG) * fraction
+    val b = startB + (endB - startB) * fraction
+    val a = startA + (endA - startA) * fraction
+
+    return Color(r, g, b, a)
+}

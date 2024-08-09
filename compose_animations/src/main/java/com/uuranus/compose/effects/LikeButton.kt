@@ -342,7 +342,7 @@ private fun ConfettiEffect(
                 launch {
                     animatable.animateTo(
                         confettiColors[index].after,
-                        animationSpec = tween(confettiDuration, easing = EaseOut)
+                        animationSpec = tween(confettiDuration, easing = LinearEasing)
                     )
                 }
             }

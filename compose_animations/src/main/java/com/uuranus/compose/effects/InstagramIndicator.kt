@@ -51,7 +51,7 @@ fun InstagramDotIndicator(
         mutableIntStateOf(0)
     }
     var height by remember {
-        mutableIntStateOf(0)
+        mutableIntStateOf(20)
     }
 
     val maxPageDots = 7
@@ -111,7 +111,7 @@ fun InstagramDotIndicator(
         }
     }
 
-    val animationDuration = 100
+    val animationDuration = 1000
 
     val dotScales = List(totalPage) { index ->
         val targetValue = when {
@@ -206,6 +206,7 @@ fun InstagramDotIndicator(
             }
 
             repeat(2) {
+
                 AnimatedVisibility(
                     visible = right - fullDotRight < 2,
                     enter = expandHorizontally(

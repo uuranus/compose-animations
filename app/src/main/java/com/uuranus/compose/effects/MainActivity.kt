@@ -1,9 +1,12 @@
 package com.uuranus.compose.effects
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Size
 import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -32,6 +35,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
@@ -49,6 +53,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,13 +62,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import com.uuranus.compose.effects.ui.theme.ComposeEffectsTheme
 import kotlinx.coroutines.delay
 
@@ -90,7 +102,7 @@ class MainActivity : ComponentActivity() {
                 val pageColors = listOf(
                     Color.Red,
                     Color.Yellow,
-                    Color.Blue,
+                    Color(0xff5CE1E6),
                     Color.Gray,
                     Color.Magenta,
                     Color.Green,
@@ -104,67 +116,171 @@ class MainActivity : ComponentActivity() {
                     pageColors.size
                 }
 
+                val test = remember {
+                    androidx.compose.animation.core.Animatable(0f)
+                }
+
+                LaunchedEffect(Unit) {
+                    test.animateTo(1f, tween(30000))
+                }
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
 
                     Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
 
-                        if (isSubscribed) {
-
-                            SubscribedButton(
-                                modifier = Modifier
-                                    .width(150.dp)
-                                    .aspectRatio(1.5f),
-                                paddingValues = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
-                            ) {
-                                isSubscribed = false
-                            }
-
-                        } else {
-
+                        HorizontalPager(
+                            state = pageState,
+                            modifier = Modifier
+                                .width(200.dp)
+                                .aspectRatio(2f)
+                        ) {
                             Box(
                                 modifier = Modifier
-                                    .wrapContentSize()
-                                    .animateContentSize()
-                                    .background(
-                                        color = Color(0xFF111011),
-                                        shape = RoundedCornerShape(
-                                            topStartPercent = 50,
-                                            topEndPercent = 50,
-                                            bottomStartPercent = 50,
-                                            bottomEndPercent = 50
-                                        )
-                                    )
-                                    .padding(
-                                        PaddingValues(horizontal = 20.dp, vertical = 12.dp)
-                                    )
-                                    .clickable {
-                                        isSubscribed = true
-                                    },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    "SUBSCRIBE",
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = Color.White
-                                )
-                            }
+                                    .fillMaxSize()
+                                    .background(pageColors[it])
+                            )
                         }
 
+                        Spacer(modifier = Modifier.height(32.dp))
+
+                        InstagramDotIndicator(
+                            currentPage = pageState.currentPage,
+                            totalPage = pageState.pageCount,
+                            spacePadding = 12.dp,
+                            modifier = Modifier
+                                .width(200.dp)
+                                .height(20.dp)
+
+                        )
+
                     }
+
+//                    Column(
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .background(Color.White),
+//                        verticalArrangement = Arrangement.Center,
+//                        horizontalAlignment = Alignment.CenterHorizontally
+//                    ) {
+//
+//                        if (isSubscribed) {
+//
+//                            SubscribedButton(
+//                                modifier = Modifier
+//                                    .width(250.dp)
+//                                    .aspectRatio(2f),
+//                                paddingValues = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
+//                            ) {
+//                                isSubscribed = false
+//                            }
+//
+//                        } else {
+//                            SubscribeButton(
+//                                modifier = Modifier
+//                                    .width(250.dp)
+//                                    .aspectRatio(2f)
+//                            ) {
+//                                isSubscribed = true
+//
+//                            }
+//                        }
+//
+//                    }
 
                 }
             }
         }
     }
 
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Composable
+fun SubscribeButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+
+    var isSubsribed by remember {
+        mutableStateOf(false)
+    }
+
+    var boxSize by remember {
+        mutableStateOf(IntSize.Zero)
+    }
+
+
+    Box(
+        modifier = modifier
+            .background(
+                color = Color(0xFF111011),
+                shape = RoundedCornerShape(
+                    topStartPercent = 50,
+                    topEndPercent = 50,
+                    bottomStartPercent = 50,
+                    bottomEndPercent = 50
+                )
+            )
+            .onGloballyPositioned {
+                val size = it.size
+                boxSize = size
+            }
+//            .drawBehind {
+//                clipRect {
+//                    drawRect(
+//                        brush = Brush.linearGradient(
+//                            colors = listOf(
+//                                Color.Transparent,
+//                                Color(0xFFFB4D46),
+//                                Color(0xFFE9E649),
+//                                Color.Transparent,
+//                            ),
+//                            start = Offset(
+//                                0f, 0f
+//                            ),
+//                            end = Offset(
+//                                0f + 2 * size.width.toFloat(),
+//                                size.height.toFloat()
+//                            )
+//                        ),
+//                    )
+//                }
+//
+//            }
+            .clip(
+                shape = RoundedCornerShape(
+                    topStartPercent = 50,
+                    topEndPercent = 50,
+                    bottomStartPercent = 50,
+                    bottomEndPercent = 50
+                )
+            )
+            .clickable {
+                isSubsribed = true
+                onClick()
+            },
+        contentAlignment = Alignment.Center
+    ) {
+
+
+        GradientShiningEffect(
+            isSubsribed,
+            size = boxSize
+        )
+
+        Text(
+            "SUBSCRIBE",
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 28.sp,
+            color = Color.White
+        )
+    }
 }
 
 
@@ -180,9 +296,31 @@ fun SubscribedButton(
 
     val density = LocalDensity.current
 
-    val endPaddingPx = remember {
-        with(density) {
-            paddingValues.calculateEndPadding(LayoutDirection.Ltr).toPx()
+    var size by remember {
+        mutableStateOf(IntSize.Zero)
+    }
+
+    val startPaddingPx =
+        with(density) { paddingValues.calculateStartPadding(LayoutDirection.Ltr).toPx() }
+    val endPaddingPx =
+        with(density) { paddingValues.calculateEndPadding(LayoutDirection.Ltr).toPx() }
+
+    val topPaddingPx =
+        with(density) { paddingValues.calculateTopPadding().toPx() }
+    val bottomPaddingPx =
+        with(density) { paddingValues.calculateBottomPadding().toPx() }
+
+
+    val iconSize by remember {
+        derivedStateOf {
+
+            val availableWidthPx = (size.width - startPaddingPx - endPaddingPx) / 2
+
+            val availableHeightPx = size.height - topPaddingPx - bottomPaddingPx
+
+            with(density) {
+                minOf(availableWidthPx, availableHeightPx).toDp()
+            }
         }
     }
 
@@ -194,7 +332,7 @@ fun SubscribedButton(
         animate(
             initialValue = 0f,
             targetValue = endPaddingPx,
-            animationSpec = tween(100),
+            animationSpec = tween(200),
         ) { value, _ ->
             endPaddingDp = with(density) {
                 value.toDp()
@@ -207,8 +345,10 @@ fun SubscribedButton(
 
     Box(
         modifier = modifier
-            .wrapContentSize()
-            .animateContentSize()
+            .fillMaxSize()
+            .onGloballyPositioned {
+                size = it.size
+            }
             .background(
                 color = Color(0xFFF5F2F5),
                 shape = RoundedCornerShape(
@@ -239,15 +379,17 @@ fun SubscribedButton(
 
             PendulumEffectAnimation(
                 modifier = Modifier
-                    .width(40.dp)
+                    .width(iconSize)
                     .aspectRatio(1f),
+                initialAngle = 15f,
                 isHanging = isStart,
                 startFromInitialAngle = true
             )
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
                 modifier = Modifier
-                    .height(40.dp),
+                    .width(iconSize)
+                    .aspectRatio(1f),
                 contentDescription = null
             )
 

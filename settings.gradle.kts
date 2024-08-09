@@ -22,4 +22,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "ComposeEffects"
 include(":app")
-include(":compose_effects")
+include(":compose_animations")
