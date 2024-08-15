@@ -47,7 +47,6 @@ fun Water(
 
     Canvas(modifier = Modifier.fillMaxSize()) {
 
-
         val wavePath = DrawWave(
             yList = waterHeightList,
             width = width.toInt(),
@@ -69,7 +68,6 @@ fun Water(
             height = height.toInt(),
             waterHeight = currentY
         )
-
 
         drawPath(
             path = wavePath,

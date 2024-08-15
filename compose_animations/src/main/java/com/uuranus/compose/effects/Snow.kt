@@ -91,7 +91,6 @@ class Snow(
         style = PaintingStyle.Fill
     }
 
-
     private var position by mutableStateOf(position)
 
     private var angle by mutableFloatStateOf(angle)

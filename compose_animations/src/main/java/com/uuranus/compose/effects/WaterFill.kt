@@ -115,8 +115,6 @@ fun WaterWave(
 
             val x2 = x - interval / 2f
 
-
-
             cubicTo(
                 x1 = x1,
                 y1 = sin(x1),

@@ -20,6 +20,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -67,6 +68,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -134,41 +136,60 @@ class MainActivity : ComponentActivity() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
 
-                        HorizontalPager(
-                            state = pageState,
-                            modifier = Modifier
-                                .width(200.dp)
-                                .aspectRatio(2f)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(pageColors[it])
-                            )
-                        }
+//                        Water(
+//                            waterLevel = 0.5f
+//                        )
 
-                        Spacer(modifier = Modifier.height(32.dp))
+//                        HorizontalPager(
+//                            state = pageState,
+//                            modifier = Modifier
+//                                .width(200.dp)
+//                                .aspectRatio(2f)
+//                        ) {
+//                            Box(
+//                                modifier = Modifier
+//                                    .fillMaxSize()
+//                                    .background(pageColors[it])
+//                            )
+//                        }
+//
+//                        Spacer(modifier = Modifier.height(32.dp))
+//
+//                        InstagramDotIndicator(
+//                            currentPage = pageState.currentPage,
+//                            totalPage = pageState.pageCount,
+//                            spacePadding = 12.dp,
+//                            modifier = Modifier
+//                                .width(200.dp)
+//                                .height(20.dp)
+//
+//                        )
 
-                        InstagramDotIndicator(
-                            currentPage = pageState.currentPage,
-                            totalPage = pageState.pageCount,
-                            spacePadding = 12.dp,
-                            modifier = Modifier
-                                .width(200.dp)
-                                .height(20.dp)
-
-                        )
 
                     }
 
-//                    Column(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .background(Color.White),
-//                        verticalArrangement = Arrangement.Center,
-//                        horizontalAlignment = Alignment.CenterHorizontally
-//                    ) {
-//
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .pointerInput(Unit) {
+                                detectTapGestures(onTap = {
+                                    isSubscribed = !isSubscribed
+                                })
+                            }
+                            .background(Color.DarkGray),
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        InstagramLiveHeart(
+                            isLiked = isiOSLiked,
+                            modifier = Modifier
+                                .padding(end = 52.dp)
+                                .width(100.dp)
+                                .aspectRatio(0.2f)
+                                .align(Alignment.End)
+                        ) {
+
+                        }
 //                        if (isSubscribed) {
 //
 //                            SubscribedButton(
@@ -190,8 +211,8 @@ class MainActivity : ComponentActivity() {
 //
 //                            }
 //                        }
-//
-//                    }
+
+                    }
 
                 }
             }
@@ -269,10 +290,10 @@ fun SubscribeButton(
     ) {
 
 
-        GradientShiningEffect(
-            isSubsribed,
-            size = boxSize
-        )
+//        GradientShiningEffect(
+//            isSubsribed,
+//            size = boxSize
+//        )
 
         Text(
             "SUBSCRIBE",
@@ -339,7 +360,7 @@ fun SubscribedButton(
             }
         }
 
-        isStart = true
+//        isStart = true
 
     }
 
@@ -385,6 +406,7 @@ fun SubscribedButton(
                 isHanging = isStart,
                 startFromInitialAngle = true
             )
+
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
                 modifier = Modifier

@@ -5,6 +5,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.StartOffset
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -12,6 +13,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -21,33 +23,45 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.uuranus.variousshapes.RingShape
+import kotlinx.coroutines.android.awaitFrame
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlin.random.Random
 
 data class ColorChange(
     val before: Color,
@@ -555,6 +569,318 @@ fun InstagramAndroidLikeButton(
                 }
         )
     }
+}
+
+@Composable
+fun InstagramLiveHeart(
+    modifier: Modifier = Modifier,
+    isLiked: Boolean,
+    onClick: () -> Unit,
+) = BoxWithConstraints(modifier) {
+
+    val density = LocalDensity.current
+
+    val widthPx = with(density) {
+        maxWidth.toPx()
+    }
+
+    val heightPx = with(density) {
+        maxHeight.toPx()
+    }
+
+    var activeHeartMotion by remember {
+        mutableStateOf(false)
+    }
+
+    var activeFirstHeartMotion by remember {
+        mutableStateOf(false)
+    }
+
+    var bubbleState by remember {
+        mutableStateOf(
+            List(30) { index ->
+
+                LiveHeart.create(
+                    index,
+                    screenSize = Size(
+                        widthPx,
+                        heightPx
+                    ),
+                    floatWidth = widthPx / 3f,
+                    density = density,
+                    radius = with(density) {
+                        25.dp.toPx()
+                    },
+                    incrementationRatio = 0.4f,
+                )
+            }
+        )
+    }
+
+    var firstBubbleState by remember {
+        mutableStateOf(
+            List(25) { index ->
+
+                LiveHeart.create(
+                    index,
+                    screenSize = Size(
+                        widthPx,
+                        heightPx
+                    ),
+                    floatWidth = widthPx,
+                    density = density,
+                    radius = with(density) {
+                        15.dp.toPx()
+                    },
+                    incrementationRatio = 1f,
+                    startOffset = Offset(
+                        0f,
+                        -heightPx / 2f
+                    )
+                )
+
+            }
+        )
+    }
+
+    LaunchedEffect(activeHeartMotion) {
+        while (isActive) {
+            awaitFrame()
+            firstBubbleState = firstBubbleState.map { bubble ->
+                bubble.updateUntilRepeatOnce(
+                    activeFirstHeartMotion,
+                    Size(
+                        widthPx,
+                        heightPx
+                    ),
+                    density
+                )
+                bubble
+            }
+            activeFirstHeartMotion = false
+
+            bubbleState = bubbleState.map { bubble ->
+                bubble.update(
+                    isRestart = activeHeartMotion,
+                    Size(
+                        widthPx,
+                        heightPx
+                    ),
+                    density
+                )
+                bubble
+            }
+
+            delay(16L)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+
+        while (true) {
+            activeHeartMotion = true
+            activeFirstHeartMotion = true
+
+            delay(2000L)
+            activeHeartMotion = false
+
+            delay(5000L)
+        }
+
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+
+        for (bubble in firstBubbleState) {
+            val offsetX = with(density) {
+                bubble.offset.x.toDp()
+            }
+
+            val offsetY = with(density) {
+                bubble.offset.y.toDp()
+            }
+
+            val radiusDp = with(density) {
+                bubble.radius.toDp()
+            }
+
+            Icon(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(radiusDp * 2)
+                    .offset(
+                        x = offsetX,
+                        y = offsetY
+                    )
+                    .alpha(
+                        bubble.alpha
+                    ),
+                tint = Color.Red.copy(alpha = bubble.backgroundAlpha)
+            )
+        }
+
+        for (bubble in bubbleState) {
+            val offsetX = with(density) {
+                bubble.offset.x.toDp()
+            }
+
+            val offsetY = with(density) {
+                bubble.offset.y.toDp()
+            }
+
+            val radiusDp = with(density) {
+                bubble.radius.toDp()
+            }
+
+            Icon(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(radiusDp * 2)
+                    .offset(
+                        x = offsetX,
+                        y = offsetY
+                    )
+                    .alpha(
+                        bubble.alpha
+                    ),
+                tint = Color.White.copy(alpha = bubble.backgroundAlpha)
+            )
+        }
+    }
+}
+
+class LiveHeart(
+    offset: Offset,
+    val radius: Float,
+    val width: Float,
+    angle: Double,
+    val backgroundAlpha: Float,
+    val index: Int,
+    incrementationRatio: Float = 0.1f,
+    private val startOffset: Offset = Offset.Zero,
+) {
+
+    var offset by mutableStateOf(offset)
+    private var angle by mutableDoubleStateOf(angle)
+    var alpha by mutableFloatStateOf(1f)
+
+    private var range = (offset.x - width / 2)..(offset.x + width / 2)
+
+    private val increment = radius * incrementationRatio
+
+    fun update(
+        isRestart: Boolean,
+        screenSize: Size,
+        density: Density,
+    ) {
+
+        if (offset.y >= screenSize.height + startOffset.y && isRestart.not()) {
+            alpha = 0f
+            return
+        }
+
+        val newX = offset.x + increment * cos(angle).toFloat()
+        val newY = offset.y + increment * sin(angle).toFloat()
+
+        offset = if (newX < 0 || newX > screenSize.width || newY < 0) {
+            initializeOffset(screenSize, density)
+        } else if (newX !in range) {
+            angle = (3 * PI / 2 - angle) + (3 * PI / 2)
+            Offset(
+                x = newX + cos(angle).toFloat(),
+                y = newY
+            )
+        } else {
+            Offset(newX, newY)
+        }
+
+        if (offset.y < screenSize.height / 2) {
+            alpha -= 0.01f
+        }
+
+        if (alpha == 0f) {
+            alpha = 1f
+        }
+    }
+
+    fun updateUntilRepeatOnce(
+        isRestart: Boolean,
+        screenSize: Size,
+        density: Density,
+    ) {
+
+        if (offset.y >= screenSize.height + startOffset.y && isRestart.not()) {
+            alpha = 0f
+            return
+        }
+
+        val newX = offset.x + increment * cos(angle).toFloat()
+        val newY = offset.y + increment * sin(angle).toFloat()
+
+        offset = if (newX < 0 || newX > screenSize.width || newY <= 0) {
+            initializeOffset(screenSize, density)
+        } else if (newX !in range) {
+            angle = (3 * PI / 2 - angle) + (3 * PI / 2)
+            Offset(
+                x = newX + cos(angle).toFloat(),
+                y = newY
+            )
+        } else {
+            if (alpha == 0f) alpha = 1f
+            Offset(newX, newY)
+        }
+
+        if (offset.y < screenSize.height / 2) {
+            alpha -= 0.01f
+        }
+        if (alpha == 0f) {
+            alpha = 1f
+        }
+    }
+
+    private fun initializeOffset(
+        screenSize: Size,
+        density: Density,
+    ): Offset {
+        val x = startOffset.x + screenSize.width / 2f
+        val y = startOffset.y + screenSize.height + 20.dp.dpToPx(density) * index
+
+        alpha = 1f
+        return Offset(x, y)
+    }
+
+    companion object {
+        fun create(
+            index: Int,
+            screenSize: Size,
+            density: Density,
+            floatWidth: Float,
+            radius: Float,
+            incrementationRatio: Float = 0.4f,
+            startOffset: Offset = Offset.Zero,
+        ): LiveHeart {
+            val x = screenSize.width / 2f
+            val y = screenSize.height + 15.dp.dpToPx(density) * index
+
+            return LiveHeart(
+                offset = Offset(x, y),
+                radius = radius,
+                width = floatWidth,
+                angle = Random.nextFloat() * (PI / 8) + PI * 3 / 2 - (PI * 1 / 16),
+                backgroundAlpha = (Random.nextFloat() + 0.2f).coerceAtMost(1f),
+                index = index,
+                incrementationRatio = incrementationRatio,
+                startOffset
+            )
+        }
+    }
+
+
 }
 
 private fun Double.toDp(): Dp = (this / Resources.getSystem().displayMetrics.density).dp

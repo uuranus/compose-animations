@@ -94,13 +94,6 @@ fun PendulumEffectAnimation(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onTap = {
-//                        isHanging = !isHanging
-                    }
-                )
-            }
             .onGloballyPositioned {
                 size = it.size
             },
@@ -123,6 +116,7 @@ fun PendulumEffectAnimation(
                 modifier = Modifier
                     .size(iconSize)
                     .graphicsLayer {
+
                         val centerY = size.height / 2
                         val angleRadians = Math.toRadians(rotation.toDouble())
 
