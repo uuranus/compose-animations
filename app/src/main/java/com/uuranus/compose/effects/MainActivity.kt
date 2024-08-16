@@ -123,7 +123,12 @@ class MainActivity : ComponentActivity() {
                 }
 
                 LaunchedEffect(Unit) {
-                    test.animateTo(1f, tween(30000))
+                    while (true) {
+                        delay(3000)
+                        isAndroidLiked = true
+                        delay(3000)
+                        isAndroidLiked = false
+                    }
                 }
 
                 Surface(
@@ -180,16 +185,16 @@ class MainActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        InstagramLiveHeart(
-                            isLiked = isiOSLiked,
-                            modifier = Modifier
-                                .padding(end = 52.dp)
-                                .width(100.dp)
-                                .aspectRatio(0.2f)
-                                .align(Alignment.End)
-                        ) {
-
+                        if (isAndroidLiked) {
+                            InstagramLiveHeart(
+                                modifier = Modifier
+                                    .padding(end = 52.dp)
+                                    .width(100.dp)
+                                    .aspectRatio(0.2f)
+                                    .align(Alignment.End)
+                            )
                         }
+
 //                        if (isSubscribed) {
 //
 //                            SubscribedButton(

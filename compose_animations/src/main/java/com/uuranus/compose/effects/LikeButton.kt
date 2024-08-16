@@ -574,8 +574,6 @@ fun InstagramAndroidLikeButton(
 @Composable
 fun InstagramLiveHeart(
     modifier: Modifier = Modifier,
-    isLiked: Boolean,
-    onClick: () -> Unit,
 ) = BoxWithConstraints(modifier) {
 
     val density = LocalDensity.current
@@ -588,12 +586,35 @@ fun InstagramLiveHeart(
         maxHeight.toPx()
     }
 
+    var activeFirstHeartMotion by remember {
+        mutableStateOf(false)
+    }
+
     var activeHeartMotion by remember {
         mutableStateOf(false)
     }
 
-    var activeFirstHeartMotion by remember {
-        mutableStateOf(false)
+    var firstBubbleState by remember {
+        mutableStateOf(
+            List(40) { index ->
+                LiveHeart.create(
+                    index,
+                    screenSize = Size(
+                        widthPx,
+                        heightPx
+                    ),
+                    floatWidth = widthPx,
+                    density = density,
+                    radius = with(density) {
+                        15.dp.toPx()
+                    },
+                    incrementationRatio = 1.5f,
+
+                    )
+            }.also {
+                activeFirstHeartMotion = true
+            }
+        )
     }
 
     var bubbleState by remember {
@@ -617,51 +638,14 @@ fun InstagramLiveHeart(
         )
     }
 
-    var firstBubbleState by remember {
-        mutableStateOf(
-            List(25) { index ->
 
-                LiveHeart.create(
-                    index,
-                    screenSize = Size(
-                        widthPx,
-                        heightPx
-                    ),
-                    floatWidth = widthPx,
-                    density = density,
-                    radius = with(density) {
-                        15.dp.toPx()
-                    },
-                    incrementationRatio = 1f,
-                    startOffset = Offset(
-                        0f,
-                        -heightPx / 2f
-                    )
-                )
 
-            }
-        )
-    }
-
-    LaunchedEffect(activeHeartMotion) {
+    LaunchedEffect(activeFirstHeartMotion) {
         while (isActive) {
             awaitFrame()
-            firstBubbleState = firstBubbleState.map { bubble ->
-                bubble.updateUntilRepeatOnce(
-                    activeFirstHeartMotion,
-                    Size(
-                        widthPx,
-                        heightPx
-                    ),
-                    density
-                )
-                bubble
-            }
-            activeFirstHeartMotion = false
 
-            bubbleState = bubbleState.map { bubble ->
+            firstBubbleState = firstBubbleState.map { bubble ->
                 bubble.update(
-                    isRestart = activeHeartMotion,
                     Size(
                         widthPx,
                         heightPx
@@ -675,18 +659,33 @@ fun InstagramLiveHeart(
         }
     }
 
-    LaunchedEffect(Unit) {
 
-        while (true) {
+    LaunchedEffect(activeFirstHeartMotion) {
+
+        if (activeFirstHeartMotion) {
+            delay(300)
             activeHeartMotion = true
-            activeFirstHeartMotion = true
-
-            delay(2000L)
-            activeHeartMotion = false
-
-            delay(5000L)
         }
+    }
 
+    LaunchedEffect(activeHeartMotion) {
+        if(!activeHeartMotion) return@LaunchedEffect
+
+        while (isActive) {
+            awaitFrame()
+            bubbleState = bubbleState.map { bubble ->
+                bubble.update(
+                    Size(
+                        widthPx,
+                        heightPx
+                    ),
+                    density
+                )
+                bubble
+            }
+
+            delay(16L)
+        }
     }
 
     Box(
@@ -719,7 +718,7 @@ fun InstagramLiveHeart(
                     .alpha(
                         bubble.alpha
                     ),
-                tint = Color.Red.copy(alpha = bubble.backgroundAlpha)
+                tint = Color.White.copy(alpha = bubble.backgroundAlpha)
             )
         }
 
@@ -769,18 +768,19 @@ class LiveHeart(
     private var angle by mutableDoubleStateOf(angle)
     var alpha by mutableFloatStateOf(1f)
 
+
     private var range = (offset.x - width / 2)..(offset.x + width / 2)
 
     private val increment = radius * incrementationRatio
 
+    private var initlaized = false
+
     fun update(
-        isRestart: Boolean,
         screenSize: Size,
         density: Density,
     ) {
 
-        if (offset.y >= screenSize.height + startOffset.y && isRestart.not()) {
-            alpha = 0f
+        if (offset.y >= screenSize.height + startOffset.y && initlaized) {
             return
         }
 
@@ -803,43 +803,8 @@ class LiveHeart(
             alpha -= 0.01f
         }
 
-        if (alpha == 0f) {
-            alpha = 1f
-        }
-    }
-
-    fun updateUntilRepeatOnce(
-        isRestart: Boolean,
-        screenSize: Size,
-        density: Density,
-    ) {
-
-        if (offset.y >= screenSize.height + startOffset.y && isRestart.not()) {
-            alpha = 0f
-            return
-        }
-
-        val newX = offset.x + increment * cos(angle).toFloat()
-        val newY = offset.y + increment * sin(angle).toFloat()
-
-        offset = if (newX < 0 || newX > screenSize.width || newY <= 0) {
-            initializeOffset(screenSize, density)
-        } else if (newX !in range) {
-            angle = (3 * PI / 2 - angle) + (3 * PI / 2)
-            Offset(
-                x = newX + cos(angle).toFloat(),
-                y = newY
-            )
-        } else {
-            if (alpha == 0f) alpha = 1f
-            Offset(newX, newY)
-        }
-
-        if (offset.y < screenSize.height / 2) {
-            alpha -= 0.01f
-        }
-        if (alpha == 0f) {
-            alpha = 1f
+        if (offset.y <= screenSize.height + startOffset.y) {
+            initlaized = true
         }
     }
 
@@ -850,7 +815,7 @@ class LiveHeart(
         val x = startOffset.x + screenSize.width / 2f
         val y = startOffset.y + screenSize.height + 20.dp.dpToPx(density) * index
 
-        alpha = 1f
+        alpha = 0f
         return Offset(x, y)
     }
 
@@ -864,8 +829,8 @@ class LiveHeart(
             incrementationRatio: Float = 0.4f,
             startOffset: Offset = Offset.Zero,
         ): LiveHeart {
-            val x = screenSize.width / 2f
-            val y = screenSize.height + 15.dp.dpToPx(density) * index
+            val x = screenSize.width / 2f + startOffset.x
+            val y = screenSize.height + startOffset.y + 15.dp.dpToPx(density) * index
 
             return LiveHeart(
                 offset = Offset(x, y),
