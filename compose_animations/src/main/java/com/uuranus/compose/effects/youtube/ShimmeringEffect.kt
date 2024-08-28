@@ -1,6 +1,5 @@
-package com.uuranus.compose.effects
+package com.uuranus.compose.effects.youtube
 
-import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -26,6 +25,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
+import com.uuranus.compose.effects.toDp
 
 @Composable
 fun ShimmeringPlaceholder(

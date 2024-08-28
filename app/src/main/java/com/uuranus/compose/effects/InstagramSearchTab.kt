@@ -1,6 +1,5 @@
 package com.uuranus.compose.effects
 
-import android.widget.Space
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,6 +43,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.uuranus.compose.effects.instagram.InstagramAndroidLikeButton
+import com.uuranus.compose.effects.instagram.InstagramiOSLikeButton
 import java.text.DecimalFormat
 
 @Composable

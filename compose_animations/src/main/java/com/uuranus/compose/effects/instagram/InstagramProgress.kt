@@ -1,4 +1,4 @@
-package com.uuranus.compose.effects
+package com.uuranus.compose.effects.instagram
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing

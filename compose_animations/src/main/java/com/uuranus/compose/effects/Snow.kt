@@ -1,6 +1,5 @@
 package com.uuranus.compose.effects
 
-import androidx.annotation.Dimension.Companion.DP
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -20,7 +18,6 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import kotlinx.coroutines.android.awaitFrame
@@ -28,7 +25,6 @@ import kotlinx.coroutines.isActive
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.random.Random
 
 
 @Composable
@@ -135,18 +131,3 @@ fun createSnowList(canvas: IntSize): List<Snow> {
     }
 }
 
-fun Int.randomTest() = Random.nextInt(this)
-
-fun Dp.dpToPx(density: Density): Int {
-    return (this.value * density.density).toInt()
-}
-
-fun ClosedFloatingPointRange<Float>.random(): Float {
-    return (Random.nextFloat() * (endInclusive - start) + start)
-}
-
-fun ClosedFloatingPointRange<Float>.randomRange(): ClosedFloatingPointRange<Float> {
-    val start = this.random()
-    val end = this.random().coerceAtLeast(start)
-    return start..end
-}

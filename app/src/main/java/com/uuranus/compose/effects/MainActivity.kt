@@ -2,21 +2,12 @@ package com.uuranus.compose.effects
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Size
-import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.Animatable
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animate
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,29 +21,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -63,11 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -77,8 +57,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.toSize
+import com.uuranus.compose.effects.instagram.InstagramDotIndicator
+import com.uuranus.compose.effects.instagram.InstagramLiveHeart
 import com.uuranus.compose.effects.ui.theme.ComposeEffectsTheme
+import com.uuranus.compose.effects.youtube.PendulumEffectAnimation
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
@@ -126,7 +108,7 @@ class MainActivity : ComponentActivity() {
                     while (true) {
                         delay(3000)
                         isAndroidLiked = true
-                        delay(3000)
+                        delay(6000)
                         isAndroidLiked = false
                     }
                 }
@@ -145,55 +127,57 @@ class MainActivity : ComponentActivity() {
 //                            waterLevel = 0.5f
 //                        )
 
-//                        HorizontalPager(
-//                            state = pageState,
-//                            modifier = Modifier
-//                                .width(200.dp)
-//                                .aspectRatio(2f)
-//                        ) {
-//                            Box(
-//                                modifier = Modifier
-//                                    .fillMaxSize()
-//                                    .background(pageColors[it])
-//                            )
-//                        }
-//
-//                        Spacer(modifier = Modifier.height(32.dp))
-//
-//                        InstagramDotIndicator(
-//                            currentPage = pageState.currentPage,
-//                            totalPage = pageState.pageCount,
-//                            spacePadding = 12.dp,
-//                            modifier = Modifier
-//                                .width(200.dp)
-//                                .height(20.dp)
-//
-//                        )
+                        HorizontalPager(
+                            state = pageState,
+                            modifier = Modifier
+                                .width(200.dp)
+                                .aspectRatio(2f)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(pageColors[it])
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(32.dp))
+
+                        InstagramDotIndicator(
+                            currentPage = pageState.currentPage,
+                            totalPage = pageState.pageCount,
+                            spacePadding = 12.dp,
+                            modifier = Modifier
+                                .width(200.dp)
+                                .height(20.dp)
+
+                        )
 
 
                     }
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .pointerInput(Unit) {
-                                detectTapGestures(onTap = {
-                                    isSubscribed = !isSubscribed
-                                })
-                            }
-                            .background(Color.DarkGray),
-                        verticalArrangement = Arrangement.Bottom,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        if (isAndroidLiked) {
-                            InstagramLiveHeart(
-                                modifier = Modifier
-                                    .padding(end = 52.dp)
-                                    .width(100.dp)
-                                    .aspectRatio(0.2f)
-                                    .align(Alignment.End)
-                            )
-                        }
+//                    Column(
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .pointerInput(Unit) {
+//                                detectTapGestures(onTap = {
+//                                    isSubscribed = !isSubscribed
+//                                })
+//                            }
+//                            .background(
+//                                color = Color.DarkGray
+//                            ),
+//                        verticalArrangement = Arrangement.Bottom,
+//                        horizontalAlignment = Alignment.CenterHorizontally
+//                    ) {
+//                        if (isAndroidLiked) {
+//                            InstagramLiveHeart(
+//                                modifier = Modifier
+//                                    .padding(end = 52.dp)
+//                                    .width(100.dp)
+//                                    .aspectRatio(0.2f)
+//                                    .align(Alignment.End)
+//                            )
+//                        }
 
 //                        if (isSubscribed) {
 //
@@ -217,7 +201,7 @@ class MainActivity : ComponentActivity() {
 //                            }
 //                        }
 
-                    }
+//                    }
 
                 }
             }
