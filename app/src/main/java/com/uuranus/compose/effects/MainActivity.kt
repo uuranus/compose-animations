@@ -11,7 +11,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,13 +22,16 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -47,25 +50,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.uuranus.compose.effects.instagram.InstagramDotIndicator
-import com.uuranus.compose.effects.instagram.InstagramLiveHeart
+import com.uuranus.compose.effects.pokemon_sleep.sleep.SleepGraph
+import com.uuranus.compose.effects.pokemon_sleep.sleep.SleepType
+import com.uuranus.compose.effects.pokemon_sleep.sleep.YLabel
 import com.uuranus.compose.effects.ui.theme.ComposeEffectsTheme
+import com.uuranus.compose.effects.ui.theme.LegendHeadingStyle
+import com.uuranus.compose.effects.ui.theme.SmallHeadingStyle
+import com.uuranus.compose.effects.ui.theme.Yellow
+import com.uuranus.compose.effects.ui.theme.YellowVariant
 import com.uuranus.compose.effects.youtube.PendulumEffectAnimation
 import kotlinx.coroutines.delay
+import java.time.DayOfWeek
+import java.time.format.TextStyle
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+
+    @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -118,90 +133,135 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                 ) {
 
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
+//                    Column(
+//                        verticalArrangement = Arrangement.Center,
+//                        horizontalAlignment = Alignment.CenterHorizontally,
+//                    ) {
 
 //                        Water(
 //                            waterLevel = 0.5f
 //                        )
 
-                        HorizontalPager(
-                            state = pageState,
-                            modifier = Modifier
-                                .width(200.dp)
-                                .aspectRatio(2f)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(pageColors[it])
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(32.dp))
-
-                        InstagramDotIndicator(
-                            currentPage = pageState.currentPage,
-                            totalPage = pageState.pageCount,
-                            spacePadding = 12.dp,
-                            modifier = Modifier
-                                .width(200.dp)
-                                .height(20.dp)
-
-                        )
-
-
-                    }
-
-//                    Column(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                            .pointerInput(Unit) {
-//                                detectTapGestures(onTap = {
-//                                    isSubscribed = !isSubscribed
-//                                })
-//                            }
-//                            .background(
-//                                color = Color.DarkGray
-//                            ),
-//                        verticalArrangement = Arrangement.Bottom,
-//                        horizontalAlignment = Alignment.CenterHorizontally
-//                    ) {
-//                        if (isAndroidLiked) {
-//                            InstagramLiveHeart(
+//                        HorizontalPager(
+//                            state = pageState,
+//                            modifier = Modifier
+//                                .width(200.dp)
+//                                .aspectRatio(2f)
+//                        ) {
+//                            Box(
 //                                modifier = Modifier
-//                                    .padding(end = 52.dp)
-//                                    .width(100.dp)
-//                                    .aspectRatio(0.2f)
-//                                    .align(Alignment.End)
+//                                    .fillMaxSize()
+//                                    .background(pageColors[it])
 //                            )
 //                        }
+//
+//                        Spacer(modifier = Modifier.height(32.dp))
+//
+//                        InstagramDotIndicator(
+//                            currentPage = pageState.currentPage,
+//                            totalPage = pageState.pageCount,
+//                            spacePadding = 12.dp,
+//                            modifier = Modifier
+//                                .width(200.dp)
+//                                .height(20.dp)
+//
+//                        )
 
-//                        if (isSubscribed) {
+//                        val sleepGraphData = sleepData
+//                        val hours =
+//                            (sleepGraphData.earliestStartHour..23) + (0..sleepGraphData.latestEndHour)
+//                        val scrollState = rememberScrollState()
 //
-//                            SubscribedButton(
-//                                modifier = Modifier
-//                                    .width(250.dp)
-//                                    .aspectRatio(2f),
-//                                paddingValues = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
-//                            ) {
-//                                isSubscribed = false
-//                            }
+//                        SleepTimeGraph(
+//                            modifier = Modifier
+//                                .fillMaxSize()
+//                                .horizontalScroll(scrollState)
+//                                .wrapContentSize(),
+//                            rowCount = sleepGraphData.sleepDayData.size,
+//                            hoursHeader = {
+//                                HoursHeader(hours)
+//                            },
+//                            dayLabel = { index ->
+//                                val data = sleepGraphData.sleepDayData[index]
+//                                DayLabel(data.startDate.dayOfWeek)
+//                            },
+//                            sleepBar = { index ->
+//                                val data = sleepGraphData.sleepDayData[index]
+//                                // We have access to Modifier.timeGraphBar() as we are now in TimeGraphScope
+//                                SleepBar(
+//                                    sleepData = data,
+//                                    modifier = Modifier
+//                                        .padding(bottom = 8.dp)
+//                                        .timeGraphSleepBar(
+//                                            start = data.firstSleepStart,
+//                                            end = data.lastSleepEnd,
+//                                            hours = hours,
+//                                        )
+//                                )
+//                            },
 //
-//                        } else {
-//                            SubscribeButton(
-//                                modifier = Modifier
-//                                    .width(250.dp)
-//                                    .aspectRatio(2f)
-//                            ) {
-//                                isSubscribed = true
-//
-//                            }
-//                        }
+//                            )
 
 //                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                color = Color(0xFF48B2FD)
+                            ),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        SleepGraph(
+                            sleepData = sleepData,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp)
+                                .aspectRatio(1.5f),
+                            timeLabel = { index ->
+                                if (index != 0 && index != sleepData.hourDuration - 1) {
+                                    SleepTimeLabel(
+                                        (sleepData.startTime.hour + index).to24Hours(),
+                                        0
+                                    )
+                                } else if (index == 0) {
+                                    SleepTimeLabel(
+                                        sleepData.startTime.hour,
+                                        sleepData.startTime.minute
+                                    )
+                                } else {
+                                    SleepTimeLabel(
+                                        sleepData.endTime.hour,
+                                        sleepData.endTime.minute
+                                    )
+                                }
+                            },
+                            yLabelsInfo = listOf(
+                                YLabel("Doz.", 50),
+                                YLabel("Snooz.", 30),
+                                YLabel("Slumb.", 10),
+                            ),
+                            yLabel = { yLabelInfo ->
+                                val color = when (yLabelInfo.description) {
+                                    "Doz." -> SleepType.DOZE.color
+                                    "Snooz." -> SleepType.SNOOZE.color
+                                    "Slumb." -> SleepType.SLUMBER.color
+                                    else -> Color.Transparent
+                                }
+
+                                Text(
+                                    yLabelInfo.description,
+                                    modifier = Modifier
+                                        .wrapContentSize(),
+                                    style = LegendHeadingStyle,
+                                    textAlign = TextAlign.End,
+                                    color = color
+                                )
+                            }
+                        )
+
+                    }
 
                 }
             }
@@ -210,208 +270,71 @@ class MainActivity : ComponentActivity() {
 
 }
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun SubscribeButton(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
+private fun DayLabel(dayOfWeek: DayOfWeek) {
+    Text(
+        dayOfWeek.getDisplayName(
+            TextStyle.SHORT, Locale.getDefault()
+        ),
+        Modifier
+            .height(24.dp)
+            .padding(start = 8.dp, end = 24.dp),
+        style = SmallHeadingStyle,
+        textAlign = TextAlign.Center
+    )
+}
 
-    var isSubsribed by remember {
-        mutableStateOf(false)
-    }
+@Composable
+private fun DayLabel(sleepType: String) {
+    Text(
+        sleepType,
+        Modifier
+            .wrapContentSize()
+            .padding(start = 8.dp, end = 24.dp),
+        style = SmallHeadingStyle,
+        textAlign = TextAlign.Center
+    )
+}
 
-    var boxSize by remember {
-        mutableStateOf(IntSize.Zero)
-    }
-
-
-    Box(
-        modifier = modifier
-            .background(
-                color = Color(0xFF111011),
-                shape = RoundedCornerShape(
-                    topStartPercent = 50,
-                    topEndPercent = 50,
-                    bottomStartPercent = 50,
-                    bottomEndPercent = 50
+@Composable
+private fun HoursHeader(hours: List<Int>) {
+    Row(
+        Modifier
+            .padding(bottom = 16.dp)
+            .drawBehind {
+                val brush = Brush.linearGradient(listOf(YellowVariant, Yellow))
+                drawRoundRect(
+                    brush,
+                    cornerRadius = CornerRadius(10.dp.toPx(), 10.dp.toPx()),
                 )
-            )
-            .onGloballyPositioned {
-                val size = it.size
-                boxSize = size
             }
-//            .drawBehind {
-//                clipRect {
-//                    drawRect(
-//                        brush = Brush.linearGradient(
-//                            colors = listOf(
-//                                Color.Transparent,
-//                                Color(0xFFFB4D46),
-//                                Color(0xFFE9E649),
-//                                Color.Transparent,
-//                            ),
-//                            start = Offset(
-//                                0f, 0f
-//                            ),
-//                            end = Offset(
-//                                0f + 2 * size.width.toFloat(),
-//                                size.height.toFloat()
-//                            )
-//                        ),
-//                    )
-//                }
-//
-//            }
-            .clip(
-                shape = RoundedCornerShape(
-                    topStartPercent = 50,
-                    topEndPercent = 50,
-                    bottomStartPercent = 50,
-                    bottomEndPercent = 50
-                )
-            )
-            .clickable {
-                isSubsribed = true
-                onClick()
-            },
-        contentAlignment = Alignment.Center
     ) {
-
-
-//        GradientShiningEffect(
-//            isSubsribed,
-//            size = boxSize
-//        )
-
-        Text(
-            "SUBSCRIBE",
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 28.sp,
-            color = Color.White
-        )
+        hours.forEach {
+            Text(
+                text = "$it",
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .width(50.dp)
+                    .padding(vertical = 4.dp),
+                style = SmallHeadingStyle
+            )
+        }
     }
 }
-
 
 @Composable
-fun SubscribedButton(
-    modifier: Modifier = Modifier,
-    paddingValues: PaddingValues,
-    onClick: () -> Unit,
-) {
-
-    val alpha by animateFloatAsState(targetValue = 1f, label = "")
-    var isStart by remember { mutableStateOf(false) }
-
-    val density = LocalDensity.current
-
-    var size by remember {
-        mutableStateOf(IntSize.Zero)
-    }
-
-    val startPaddingPx =
-        with(density) { paddingValues.calculateStartPadding(LayoutDirection.Ltr).toPx() }
-    val endPaddingPx =
-        with(density) { paddingValues.calculateEndPadding(LayoutDirection.Ltr).toPx() }
-
-    val topPaddingPx =
-        with(density) { paddingValues.calculateTopPadding().toPx() }
-    val bottomPaddingPx =
-        with(density) { paddingValues.calculateBottomPadding().toPx() }
-
-
-    val iconSize by remember {
-        derivedStateOf {
-
-            val availableWidthPx = (size.width - startPaddingPx - endPaddingPx) / 2
-
-            val availableHeightPx = size.height - topPaddingPx - bottomPaddingPx
-
-            with(density) {
-                minOf(availableWidthPx, availableHeightPx).toDp()
-            }
-        }
-    }
-
-    var endPaddingDp by remember {
-        mutableStateOf(0.dp)
-    }
-
-    LaunchedEffect(Unit) {
-        animate(
-            initialValue = 0f,
-            targetValue = endPaddingPx,
-            animationSpec = tween(200),
-        ) { value, _ ->
-            endPaddingDp = with(density) {
-                value.toDp()
-            }
-        }
-
-//        isStart = true
-
-    }
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .onGloballyPositioned {
-                size = it.size
-            }
-            .background(
-                color = Color(0xFFF5F2F5),
-                shape = RoundedCornerShape(
-                    topStartPercent = 50,
-                    topEndPercent = 50,
-                    bottomStartPercent = 50,
-                    bottomEndPercent = 50
-                )
-            )
-            .alpha(alpha)
-            .padding(
-                top = paddingValues.calculateTopPadding(),
-                bottom = paddingValues.calculateBottomPadding(),
-                start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
-                end = endPaddingDp
-            )
-            .clickable {
-                onClick()
-            },
-        contentAlignment = Alignment.Center
-    ) {
-        Row(
-            modifier = Modifier
-                .wrapContentSize(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            PendulumEffectAnimation(
-                modifier = Modifier
-                    .width(iconSize)
-                    .aspectRatio(1f),
-                initialAngle = 15f,
-                isHanging = isStart,
-                startFromInitialAngle = true
-            )
-
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowDown,
-                modifier = Modifier
-                    .width(iconSize)
-                    .aspectRatio(1f),
-                contentDescription = null
-            )
-
-        }
-    }
+private fun SleepTimeLabel(hour: Int, minutes: Int) {
+    Text(
+        text = if (minutes == 0) {
+            String.format("%02d", hour)
+        } else {
+            String.format("%02d:%02d", hour, minutes)
+        },
+        modifier = Modifier
+            .wrapContentSize(),
+        style = LegendHeadingStyle
+            .copy(color = Color(0xFF93C6FA)),
+        textAlign = TextAlign.Center
+    )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ComposeEffectsTheme {
-
-    }
-}

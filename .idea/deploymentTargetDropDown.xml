@@ -2,6 +2,15 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="PreviewDragDropCardDemo">
+        <State />
+      </entry>
+      <entry key="PreviewSliderDemo">
+        <State />
+      </entry>
+      <entry key="PreviewSpringButtonDemo">
+        <State />
+      </entry>
       <entry key="app">
         <State>
           <targetSelectedWithDropDown>

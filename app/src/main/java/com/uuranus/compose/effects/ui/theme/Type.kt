@@ -32,3 +32,18 @@ val Typography = Typography(
     )
     */
 )
+
+
+val SmallHeadingStyle = TextStyle(
+    fontSize = 16.sp,
+    fontWeight = FontWeight(600),
+    letterSpacing = 0.5.sp,
+    fontFamily = FontFamily.Default
+)
+
+val LegendHeadingStyle = TextStyle(
+    fontSize = 10.sp,
+    fontWeight = FontWeight(600),
+    letterSpacing = 0.5.sp,
+    fontFamily = FontFamily.Default
+)

@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.uuranus.compose.effects"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -68,4 +68,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(project(":compose_animations"))
 
+    implementation(libs.androidx.compose.ui.util)
 }
