@@ -39,19 +39,12 @@ fun Int.to24Hours(): Int {
 }
 
 internal fun LocalTime.minuteDiff(from: LocalTime): Int {
-    val result = if (from.hour <= this.hour) {
+    val thisMinutes = this.hour * 60 + this.minute
+    val fromMinutes = from.hour * 60 + from.minute
 
-        val thisMinute = hour * 60 + minute
-        val fromMinute = from.hour * 60 + from.minute
-
-        thisMinute - fromMinute
+    return if (thisMinutes >= fromMinutes) {
+        thisMinutes - fromMinutes
     } else {
-
-        val thisMinute = (24 + hour) * 60 + minute
-        val fromMinute = from.hour * 60 + from.minute
-
-        thisMinute - fromMinute
+        (1440 - fromMinutes) + thisMinutes
     }
-
-    return result
 }

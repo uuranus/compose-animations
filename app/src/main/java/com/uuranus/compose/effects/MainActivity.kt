@@ -1,81 +1,41 @@
 package com.uuranus.compose.effects
 
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.animate
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.uuranus.compose.effects.pokemon_sleep.sleep.SleepGraph
-import com.uuranus.compose.effects.pokemon_sleep.sleep.SleepType
-import com.uuranus.compose.effects.pokemon_sleep.sleep.YLabel
+import com.uuranus.compose.effects.pokemon_sleep.graph.graph.YLabel
+import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepGraph
+import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepType
+import com.uuranus.compose.effects.pokemon_sleep.graph.sound.SoundGraph
+import com.uuranus.compose.effects.pokemon_sleep.graph.sound.SoundType
+import com.uuranus.compose.effects.pokemon_sleep.graph.sound.soundDataPeriod
 import com.uuranus.compose.effects.ui.theme.ComposeEffectsTheme
 import com.uuranus.compose.effects.ui.theme.LegendHeadingStyle
-import com.uuranus.compose.effects.ui.theme.SmallHeadingStyle
-import com.uuranus.compose.effects.ui.theme.Yellow
-import com.uuranus.compose.effects.ui.theme.YellowVariant
-import com.uuranus.compose.effects.youtube.PendulumEffectAnimation
 import kotlinx.coroutines.delay
-import java.time.DayOfWeek
-import java.time.format.TextStyle
-import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
@@ -213,42 +173,81 @@ class MainActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        SleepGraph(
-                            sleepData = sleepData,
+//                        SleepGraph(
+//                            sleepData = sleepData,
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .padding(32.dp)
+//                                .aspectRatio(1.5f),
+//                            xLabel = { index ->
+//                                if (index != 0 && index != sleepData.hourDuration - 1) {
+//                                    SleepTimeLabel(
+//                                        (sleepData.startTime.hour + index).to24Hours(),
+//                                        0
+//                                    )
+//                                } else if (index == 0) {
+//                                    SleepTimeLabel(
+//                                        sleepData.startTime.hour,
+//                                        sleepData.startTime.minute
+//                                    )
+//                                } else {
+//                                    SleepTimeLabel(
+//                                        sleepData.endTime.hour,
+//                                        sleepData.endTime.minute
+//                                    )
+//                                }
+//                            },
+//                            yLabelsInfo = listOf(
+//                                YLabel("Doz.", 50, key = SleepType.DOZE),
+//                                YLabel("Snooz.", 30, SleepType.SNOOZE),
+//                                YLabel("Slumb.", 10, SleepType.SLUMBER),
+//                            ),
+//                            yLabel = { yLabelInfo ->
+//                                val color = (yLabelInfo.key as SleepType).color
+//
+//                                Text(
+//                                    yLabelInfo.description,
+//                                    modifier = Modifier
+//                                        .wrapContentSize(),
+//                                    style = LegendHeadingStyle,
+//                                    textAlign = TextAlign.End,
+//                                    color = color
+//                                )
+//                            }
+//                        )
+
+                        SoundGraph(
+                            soundDataPeriod = soundDataPeriod,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(32.dp)
                                 .aspectRatio(1.5f),
-                            timeLabel = { index ->
-                                if (index != 0 && index != sleepData.hourDuration - 1) {
+                            xLabel = { index ->
+                                if (index != 0 && index != soundDataPeriod.hourDuration - 1) {
                                     SleepTimeLabel(
-                                        (sleepData.startTime.hour + index).to24Hours(),
+                                        (soundDataPeriod.startTime.hour + index).to24Hours(),
                                         0
                                     )
                                 } else if (index == 0) {
                                     SleepTimeLabel(
-                                        sleepData.startTime.hour,
-                                        sleepData.startTime.minute
+                                        soundDataPeriod.startTime.hour,
+                                        soundDataPeriod.startTime.minute
                                     )
                                 } else {
                                     SleepTimeLabel(
-                                        sleepData.endTime.hour,
-                                        sleepData.endTime.minute
+                                        soundDataPeriod.endTime.hour,
+                                        soundDataPeriod.endTime.minute
                                     )
                                 }
                             },
                             yLabelsInfo = listOf(
-                                YLabel("Doz.", 50),
-                                YLabel("Snooz.", 30),
-                                YLabel("Slumb.", 10),
+                                YLabel("100 dB", 100, key = SoundType.VeryLoud),
+                                YLabel("80 dB", 80, key = SoundType.Loud),
+                                YLabel("60 dB", 60, key = SoundType.Normal),
+                                YLabel("40 dB", 40, key = SoundType.Quiet),
                             ),
                             yLabel = { yLabelInfo ->
-                                val color = when (yLabelInfo.description) {
-                                    "Doz." -> SleepType.DOZE.color
-                                    "Snooz." -> SleepType.SNOOZE.color
-                                    "Slumb." -> SleepType.SLUMBER.color
-                                    else -> Color.Transparent
-                                }
+                                val color = (yLabelInfo.key as SoundType).color
 
                                 Text(
                                     yLabelInfo.description,
@@ -258,7 +257,10 @@ class MainActivity : ComponentActivity() {
                                     textAlign = TextAlign.End,
                                     color = color
                                 )
-                            }
+                            },
+                            maxYPosition = 100,
+                            minYPosition = 20,
+                            hideEdgeXTicker = true
                         )
 
                     }
@@ -268,58 +270,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-}
-
-@Composable
-private fun DayLabel(dayOfWeek: DayOfWeek) {
-    Text(
-        dayOfWeek.getDisplayName(
-            TextStyle.SHORT, Locale.getDefault()
-        ),
-        Modifier
-            .height(24.dp)
-            .padding(start = 8.dp, end = 24.dp),
-        style = SmallHeadingStyle,
-        textAlign = TextAlign.Center
-    )
-}
-
-@Composable
-private fun DayLabel(sleepType: String) {
-    Text(
-        sleepType,
-        Modifier
-            .wrapContentSize()
-            .padding(start = 8.dp, end = 24.dp),
-        style = SmallHeadingStyle,
-        textAlign = TextAlign.Center
-    )
-}
-
-@Composable
-private fun HoursHeader(hours: List<Int>) {
-    Row(
-        Modifier
-            .padding(bottom = 16.dp)
-            .drawBehind {
-                val brush = Brush.linearGradient(listOf(YellowVariant, Yellow))
-                drawRoundRect(
-                    brush,
-                    cornerRadius = CornerRadius(10.dp.toPx(), 10.dp.toPx()),
-                )
-            }
-    ) {
-        hours.forEach {
-            Text(
-                text = "$it",
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .width(50.dp)
-                    .padding(vertical = 4.dp),
-                style = SmallHeadingStyle
-            )
-        }
-    }
 }
 
 @Composable

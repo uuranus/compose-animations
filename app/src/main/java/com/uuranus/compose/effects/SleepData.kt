@@ -1,8 +1,8 @@
 package com.uuranus.compose.effects
 
-import com.uuranus.compose.effects.pokemon_sleep.sleep.SleepData
-import com.uuranus.compose.effects.pokemon_sleep.sleep.SleepPeriod
-import com.uuranus.compose.effects.pokemon_sleep.sleep.SleepType
+import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepData
+import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepPeriod
+import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepType
 import java.time.LocalTime
 
 val sleepData =

@@ -1,7 +1,7 @@
 package com.uuranus.compose.effects.sleep
 
 import androidx.compose.ui.graphics.Color
-import com.uuranus.compose.effects.pokemon_sleep.sleep.SleepType
+import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepType
 import java.time.Duration
 import java.time.LocalDateTime
 
