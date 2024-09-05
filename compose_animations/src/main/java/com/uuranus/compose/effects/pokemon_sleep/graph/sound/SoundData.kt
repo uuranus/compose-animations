@@ -20,14 +20,13 @@ data class SoundDataPeriod(
     private val startMinutes = startTime.hour * 60 + startTime.minute
     private val endMinutes = endTime.hour * 60 + endTime.minute
 
-    // If endMinutes is before startMinutes, it means the end time is on the next day
-    val duration = if (endMinutes >= startMinutes) {
+    private val duration = if (endMinutes >= startMinutes) {
         endMinutes - startMinutes
     } else {
         (1440 - startMinutes) + endMinutes // 1440 minutes in a day
     }
 
-    val minuteDuration = duration // Including the end time as well
+    val minuteDuration = duration
 }
 
 data class SoundData(

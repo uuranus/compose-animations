@@ -13,19 +13,21 @@ data class SleepData(
     private val endOver = if (endTime.minute == 0) 0 else 1
 
     val hourDuration = if (endTime.hour > startTime.hour) {
-        endTime.hour - startTime.hour + startOver + endOver
+        endTime.hour - startTime.hour + endOver
     } else {
-        24 - startTime.hour + endTime.hour + startOver +endOver
+        24 - startTime.hour + endTime.hour + endOver
     }
 
-    private val startRemainMinutes = 60 - startTime.minute
-    private val endOverMinutes = endTime.minute + 1
+    private val startMinutes = startTime.hour * 60 + startTime.minute
+    private val endMinutes = endTime.hour * 60 + endTime.minute
 
-    val minuteDuration = if (endTime.hour > startTime.hour) {
-        (endTime.hour - startTime.hour + 1) * 60 + startRemainMinutes + endOverMinutes
+    private val duration = if (endMinutes >= startMinutes) {
+        endMinutes - startMinutes
     } else {
-        (24 - startTime.hour + endTime.hour - 1) * 60 + startRemainMinutes + endOverMinutes
+        (1440 - startMinutes) + endMinutes // 1440 minutes in a day
     }
+
+    val minuteDuration = duration
 
 }
 

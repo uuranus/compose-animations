@@ -9,7 +9,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import com.uuranus.compose.effects.pokemon_sleep.graph.graph.GraphArea
 import com.uuranus.compose.effects.pokemon_sleep.graph.graph.YLabel
 
@@ -65,11 +64,9 @@ fun SoundGraph(
         ) {
             SoundBar(
                 soundDataPeriod,
-                yLabelsInfo = yLabelsInfo,
                 xAxisHeight = xAxisHeight,
                 xAxisTickerHeight = xTickerHeight,
                 yAxisWidth = yAxisWidth,
-                yAxisTickerWidth = yAxisWidth,
                 maxYPosition = maxYPosition,
                 minYPosition = minYPosition,
                 barWidth = yAxisWidth.toFloat()
