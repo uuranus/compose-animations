@@ -7,7 +7,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import kotlin.math.max
 
 @Composable
 fun GraphArea(
@@ -93,6 +92,7 @@ fun GraphArea(
                         size = Size(yAxisWidth.toFloat(), xAxisTickerHeight.toFloat())
                     )
                 }
+
             }
 
     ) {

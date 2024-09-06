@@ -187,28 +187,21 @@ private fun DrawScope.drawSleepPath(
     textResult: TextLayoutResult,
     cornerRadiusStartPx: Float,
 ) {
+
     val pathMeasure = PathMeasure()
     pathMeasure.setPath(sleepGraphPath, false)
 
     val segmentPath = Path()
-    var currentLength = 0f
     val pathLength = pathMeasure.length
 
     val segmentLength = pathLength * animationProgress
 
-    while (currentLength < segmentLength) {
-        val nextSegmentLength =
-            (segmentLength - currentLength).coerceAtMost(pathLength - currentLength)
-
-        pathMeasure.getSegment(
-            currentLength,
-            currentLength + nextSegmentLength,
-            segmentPath,
-            true
-        )
-
-        currentLength += nextSegmentLength
-    }
+    pathMeasure.getSegment(
+        0f,
+        segmentLength,
+        segmentPath,
+        true
+    )
 
     clipPath(roundedRectPath) {
         drawPath(

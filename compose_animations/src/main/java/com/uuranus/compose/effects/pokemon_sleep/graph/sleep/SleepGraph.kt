@@ -63,6 +63,7 @@ fun SleepGraph(
         }
     }
 
+
     val rowCount = yLabelsInfo.maxOf { it.position }
 
     val density = LocalDensity.current
@@ -155,7 +156,10 @@ fun SleepGraph(
             val yPosition = constraints.maxHeight - sleepTimeXLabelPlaceables.first().height
 
             sleepTimeXLabelPlaceables.forEach { placeable ->
-                placeable.place(x = xPosition + yAxisWidth / 2 - placeable.width / 2, y = yPosition)
+                placeable.place(
+                    x = xPosition + yAxisWidth / 2 - placeable.width / 2,
+                    y = yPosition
+                )
 
                 xPosition += xPositionJump
             }
