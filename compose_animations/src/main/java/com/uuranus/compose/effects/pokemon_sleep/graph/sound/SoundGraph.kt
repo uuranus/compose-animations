@@ -24,17 +24,6 @@ fun SoundGraph(
     hideEdgeXTicker: Boolean = false,
 ) {
 
-    val xLabels = @Composable {
-        repeat(soundDataPeriod.hourDuration) {
-            xLabel(it)
-        }
-    }
-
-    val yLabels = @Composable {
-        repeat(yLabelsInfo.size) { index ->
-            yLabel(yLabelsInfo[index])
-        }
-    }
 
     val density = LocalDensity.current
 
@@ -48,6 +37,18 @@ fun SoundGraph(
 
     val xTickerHeight = with(density) {
         5.dp.roundToPx()
+    }
+
+    val xLabels = @Composable {
+        repeat(soundDataPeriod.hourDuration) {
+            xLabel(it)
+        }
+    }
+
+    val yLabels = @Composable {
+        repeat(yLabelsInfo.size) { index ->
+            yLabel(yLabelsInfo[index])
+        }
     }
 
     val graphArea = @Composable {
@@ -127,11 +128,6 @@ fun SoundGraph(
             var xPosition = yLabelMaxWidth + labelGraphPadding
             val yPosition = constraints.maxHeight - xLabelsPlaceables.first().height
 
-            xLabelsPlaceables.forEach { placeable ->
-                placeable.place(x = xPosition + yAxisWidth / 2 - placeable.width / 2, y = yPosition)
-
-                xPosition += xPositionJump
-            }
 
             val rowCount = maxYPosition - minYPosition
             val yLabelHeight = groupAreaHeight - xTickerHeight - xAxisHeight
@@ -139,6 +135,15 @@ fun SoundGraph(
                 yLabelHeight.toFloat() / rowCount
 
             val yLabelBottom = yPosition - labelGraphPadding - xTickerHeight - xAxisHeight
+
+            xLabelsPlaceables.forEach { placeable ->
+                placeable.place(
+                    x = xPosition + yAxisWidth / 2 - placeable.width / 2,
+                    y = yPosition)
+
+                xPosition += xPositionJump
+            }
+
             yLabelsPlaceables.forEachIndexed { index, placeable ->
                 val yPos = (yLabelsInfo[index].position - minYPosition) * yLabelInterval
                 placeable.place(

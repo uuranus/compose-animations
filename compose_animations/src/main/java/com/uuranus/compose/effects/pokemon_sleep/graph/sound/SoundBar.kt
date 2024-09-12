@@ -83,29 +83,30 @@ fun SoundBar(
                 }
             }
     )
-}
-
-
-private fun DrawScope.drawSoundBar(
-    soundData: SoundData,
-    startTime: LocalTime,
-    yInterval: Float,
-    xInterval: Float,
-    barWidth: Float,
-    size: Size,
-    minYPosition: Int,
-    color: Color,
-    animatedProgress: Float,
-) {
-
-    val height = (soundData.decibel - minYPosition) * yInterval * animatedProgress
-
-    val xPos = soundData.time.minuteDiff(startTime) * xInterval
-
-    drawRect(
-        color = color,
-        topLeft = Offset(xPos, size.height - height),
-        size = Size(barWidth, height)
-    )
 
 }
+
+
+    private fun DrawScope.drawSoundBar(
+        soundData: SoundData,
+        startTime: LocalTime,
+        yInterval: Float,
+        xInterval: Float,
+        barWidth: Float,
+        size: Size,
+        minYPosition: Int,
+        color: Color,
+        animatedProgress: Float,
+    ) {
+
+        val height = (soundData.decibel - minYPosition) * yInterval * animatedProgress
+
+        val xPos = soundData.time.minuteDiff(startTime) * xInterval
+
+        drawRect(
+            color = color,
+            topLeft = Offset(xPos, size.height - height),
+            size = Size(barWidth, height)
+        )
+
+    }
