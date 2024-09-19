@@ -43,6 +43,7 @@ import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepGraph
 import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepType
 import com.uuranus.compose.effects.ui.theme.ComposeEffectsTheme
 import com.uuranus.compose.effects.ui.theme.LegendHeadingStyle
+import com.uuranus.compose.effects.youtube.ShimmeringPlaceholder
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
@@ -138,23 +139,20 @@ class MainActivity : ComponentActivity() {
                 }
 
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            color = Color(0xFF48B2FD)
-                        ),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+//                Column(
+//                    modifier = Modifier
+//                        .fillMaxSize(),
+//                    verticalArrangement = Arrangement.Center,
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
 
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        PokemonBallWallPaper(
-                            modifier = Modifier.fillMaxSize()
-                        )
+//                    Box(
+//                        modifier = Modifier.fillMaxSize(),
+//                        contentAlignment = Alignment.Center
+//                    ) {
+//                        PokemonBallWallPaper(
+//                            modifier = Modifier.fillMaxSize()
+//                        )
 
 //                        Box(
 //                            modifier = Modifier
@@ -210,10 +208,10 @@ class MainActivity : ComponentActivity() {
 //                                }
 //                            )
 //                        }
-                    }
+//                    }
 
 
-                }
+//            }
 
 //                        SleepGraph(
 //                            sleepData = sleepData,
@@ -304,6 +302,11 @@ class MainActivity : ComponentActivity() {
 //                        minYPosition = 20,
 //                        hideEdgeXTicker = true
 //                    )
+                
+                ShimmeringPlaceholder(
+                    modifier = Modifier.fillMaxSize(),
+                    backgroundColor = Color.White
+                )
 
 
             }
