@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,6 +42,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import androidx.core.view.WindowCompat
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.uuranus.compose.effects.instagram.InstagramLiveHeart
 import com.uuranus.compose.effects.pokemon_sleep.PokemonBallWallPaper
 import com.uuranus.compose.effects.pokemon_sleep.generatePokemonBall
 import com.uuranus.compose.effects.pokemon_sleep.graph.graph.YLabel
@@ -62,10 +66,11 @@ class MainActivity : ComponentActivity() {
         return Pair(row, xPos)
     }
 
-    @SuppressLint("MutableCollectionMutableState")
-    @OptIn(ExperimentalFoundationApi::class)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             ComposeEffectsTheme {
@@ -74,6 +79,17 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color(0xFF1BB1FB))
+                    ) {
+                        PokemonBallWallPaper(
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+
 
 //                    Column(
 //                        verticalArrangement = Arrangement.Center,
@@ -345,21 +361,6 @@ class MainActivity : ComponentActivity() {
 //
 //                    }
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color(0xFF080808)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    SubscribeButton(
-                        modifier = Modifier
-                            .width(300.dp)
-                            .aspectRatio(1.5f),
-                        onClick = {}
-                    )
-                }
-
-
             }
 
 
@@ -385,3 +386,14 @@ private fun SleepTimeLabel(hour: Int, minutes: Int) {
     )
 }
 
+
+@Composable
+fun TransparentStatusBar() {
+    val systemUiController = rememberSystemUiController()
+
+    // 상태바를 투명하게 설정
+    systemUiController.setStatusBarColor(
+        color = Color.Transparent,  // 상태바 색을 투명하게
+        darkIcons = true  // 상태바 아이콘을 어둡게 설정 (배경이 밝은 경우 사용)
+    )
+}

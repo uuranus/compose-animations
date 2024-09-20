@@ -1,4 +1,5 @@
 [versions]
+accompanistSystemuicontroller = "0.36.0"
 agp = "8.3.1"
 composeShapes = "1.1.1"
 kotlin = "1.9.0"
@@ -13,6 +14,7 @@ appcompat = "1.7.0"
 material = "1.12.0"
 
 [libraries]
+accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 compose-shapes = { module = "com.github.uuranus:compose-shapes", version.ref = "composeShapes" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

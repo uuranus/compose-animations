@@ -69,4 +69,6 @@ dependencies {
     implementation(project(":compose_animations"))
 
     implementation(libs.androidx.compose.ui.util)
+    implementation(libs.accompanist.systemuicontroller)
+
 }

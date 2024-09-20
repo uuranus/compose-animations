@@ -257,7 +257,7 @@ private fun makeNewDiagonalList(
     val rowOffsets = mutableListOf<Offset>()
     var currentX = if (rowCount % 2 == 0) -ballSize else 0f
 
-    while (currentX <= width * 2 + ballSize) {
+    while (currentX <= width * 3 + ballSize) {
         rowOffsets.add(Offset(currentX, currentY))
         currentX += ballSize + diagonalXSpace
     }
