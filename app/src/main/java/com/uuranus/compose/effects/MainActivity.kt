@@ -9,10 +9,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -43,7 +48,10 @@ import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepGraph
 import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepType
 import com.uuranus.compose.effects.ui.theme.ComposeEffectsTheme
 import com.uuranus.compose.effects.ui.theme.LegendHeadingStyle
+import com.uuranus.compose.effects.youtube.PendulumEffectAnimation
 import com.uuranus.compose.effects.youtube.ShimmeringPlaceholder
+import com.uuranus.compose.effects.youtube.SubscribeButton
+import com.uuranus.compose.effects.youtube.SubscribedButton
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
@@ -302,17 +310,62 @@ class MainActivity : ComponentActivity() {
 //                        minYPosition = 20,
 //                        hideEdgeXTicker = true
 //                    )
-                
-                ShimmeringPlaceholder(
-                    modifier = Modifier.fillMaxSize(),
-                    backgroundColor = Color.White
-                )
+
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .background(Color(0xFF080808))
+//                        .padding(24.dp),
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    ShimmeringPlaceholder(
+//                        modifier = Modifier
+//                            .width(100.dp)
+//                            .aspectRatio(1f),
+//                        backgroundColor = MaterialTheme.colorScheme.background
+//                    )
+//
+//                    Spacer(modifier = Modifier.width(16.dp))
+//
+//                    Column(modifier = Modifier.weight(4f)) {
+//                        ShimmeringPlaceholder(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .height(40.dp),
+//                            backgroundColor = MaterialTheme.colorScheme.background
+//                        )
+//                        Spacer(modifier = Modifier.height(16.dp))
+//
+//                        ShimmeringPlaceholder(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .height(40.dp),
+//                            backgroundColor = MaterialTheme.colorScheme.background
+//                        )
+//
+//                    }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFF080808)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    SubscribeButton(
+                        modifier = Modifier
+                            .width(300.dp)
+                            .aspectRatio(1.5f),
+                        onClick = {}
+                    )
+                }
 
 
             }
-        }
 
+
+        }
     }
+
 }
 
 
