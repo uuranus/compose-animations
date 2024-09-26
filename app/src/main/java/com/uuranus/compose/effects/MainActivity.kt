@@ -9,17 +9,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -45,6 +44,7 @@ import androidx.compose.ui.unit.toSize
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.uuranus.compose.effects.instagram.InstagramLiveHeart
+import com.uuranus.compose.effects.instagram.StoryPageTransition
 import com.uuranus.compose.effects.pokemon_sleep.PokemonBallWallPaper
 import com.uuranus.compose.effects.pokemon_sleep.generatePokemonBall
 import com.uuranus.compose.effects.pokemon_sleep.graph.graph.YLabel
@@ -80,17 +80,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                 ) {
 
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color(0xFF1BB1FB))
-                    ) {
-                        PokemonBallWallPaper(
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-
-
 //                    Column(
 //                        verticalArrangement = Arrangement.Center,
 //                        horizontalAlignment = Alignment.CenterHorizontally,
@@ -112,7 +101,7 @@ class MainActivity : ComponentActivity() {
 //                                    .background(pageColors[it])
 //                            )
 //                        }
-//
+
 //                        Spacer(modifier = Modifier.height(32.dp))
 //
 //                        InstagramDotIndicator(
@@ -360,6 +349,32 @@ class MainActivity : ComponentActivity() {
 //                        )
 //
 //                    }
+//                }
+//                Box(
+//                    modifier = Modifier.fillMaxSize()
+//                        .background(Color(0xFF080808))
+//                        .padding(25.dp),
+//                    contentAlignment = Alignment.Center
+//                ){
+//                    SubscribeButton(
+//                        modifier = Modifier.wrapContentSize()
+//                    ) {
+//
+//                    }
+//                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black)
+                        .statusBarsPadding()
+                        .padding(vertical = 24.dp)
+                ) {
+                    StoryPageTransition(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                }
 
             }
 
