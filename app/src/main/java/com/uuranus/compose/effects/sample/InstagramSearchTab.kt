@@ -1,4 +1,4 @@
-package com.uuranus.compose.effects
+package com.uuranus.compose.effects.sample
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -43,17 +43,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.uuranus.compose.effects.R
 import com.uuranus.compose.effects.instagram.InstagramAndroidLikeButton
 import com.uuranus.compose.effects.instagram.InstagramiOSLikeButton
 import java.text.DecimalFormat
 
 @Composable
 fun InstagramSearchTab() {
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-    ){
+    ) {
         CustomTopAppBar(
             title = {
                 Text(
@@ -73,16 +74,20 @@ fun InstagramSearchTab() {
 
         LazyColumn {
             item {
-                InstagramAOSFeed(modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight())
+                InstagramAOSFeed(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                )
 
             }
 
             item {
-                InstagramiOSFeed(modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight())
+                InstagramiOSFeed(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                )
 
             }
 
@@ -272,7 +277,7 @@ fun FeedAOSReaction(isLiked: Boolean, onHearClick: () -> Unit) {
 
         Spacer(modifier = Modifier.width(8.dp))
         Image(
-            painter = painterResource(id = com.uuranus.compose.effects.R.drawable.ic_reels_comment),
+            painter = painterResource(id = R.drawable.ic_reels_comment),
             contentDescription = null,
             colorFilter = ColorFilter.tint(color = Color.Black),
             modifier = Modifier
@@ -280,7 +285,7 @@ fun FeedAOSReaction(isLiked: Boolean, onHearClick: () -> Unit) {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Image(
-            painter = painterResource(id = com.uuranus.compose.effects.R.drawable.ic_reels_send),
+            painter = painterResource(id = R.drawable.ic_reels_send),
             contentDescription = null,
             colorFilter = ColorFilter.tint(color = Color.Black),
             modifier = Modifier
@@ -290,7 +295,7 @@ fun FeedAOSReaction(isLiked: Boolean, onHearClick: () -> Unit) {
         Spacer(modifier = Modifier.weight(1f))
 
         Image(
-            painter = painterResource(id = com.uuranus.compose.effects.R.drawable.ic_bookmark_white),
+            painter = painterResource(id = R.drawable.ic_bookmark_white),
             contentDescription = null,
             colorFilter = ColorFilter.tint(color = Color.Black),
             modifier = Modifier
@@ -317,7 +322,7 @@ fun FeediOSReaction(isLiked: Boolean, onHearClick: () -> Unit) {
 
         Spacer(modifier = Modifier.width(8.dp))
         Image(
-            painter = painterResource(id = com.uuranus.compose.effects.R.drawable.ic_reels_comment),
+            painter = painterResource(id = R.drawable.ic_reels_comment),
             contentDescription = null,
             colorFilter = ColorFilter.tint(color = Color.Black),
             modifier = Modifier
@@ -325,7 +330,7 @@ fun FeediOSReaction(isLiked: Boolean, onHearClick: () -> Unit) {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Image(
-            painter = painterResource(id = com.uuranus.compose.effects.R.drawable.ic_reels_send),
+            painter = painterResource(id = R.drawable.ic_reels_send),
             contentDescription = null,
             colorFilter = ColorFilter.tint(color = Color.Black),
             modifier = Modifier
@@ -335,7 +340,7 @@ fun FeediOSReaction(isLiked: Boolean, onHearClick: () -> Unit) {
         Spacer(modifier = Modifier.weight(1f))
 
         Image(
-            painter = painterResource(id = com.uuranus.compose.effects.R.drawable.ic_bookmark_white),
+            painter = painterResource(id = R.drawable.ic_bookmark_white),
             contentDescription = null,
             colorFilter = ColorFilter.tint(color = Color.Black),
             modifier = Modifier

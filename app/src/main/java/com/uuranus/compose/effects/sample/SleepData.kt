@@ -1,4 +1,4 @@
-package com.uuranus.compose.effects
+package com.uuranus.compose.effects.sample
 
 import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepData
 import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepPeriod
