@@ -6,6 +6,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import java.time.LocalDateTime
 import java.time.LocalTime
+import kotlin.math.PI
 import kotlin.random.Random
 
 internal fun Int.randomTest() = Random.nextInt(this)
@@ -47,4 +48,14 @@ internal fun LocalTime.minuteDiff(from: LocalTime): Int {
     } else {
         (1440 - fromMinutes) + thisMinutes
     }
+}
+
+// 각도를 라디안으로 변환
+internal fun Float.toRadian(): Float {
+    return this * (PI.toFloat() / 180f)
+}
+
+// 라디안을 각도로 변환
+internal fun Float.toDegree(): Float {
+    return this * (180f / PI.toFloat())
 }

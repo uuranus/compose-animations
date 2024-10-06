@@ -32,7 +32,6 @@ fun StoryPageIndicator(
     onPageAnimationEnded: () -> Unit,
     isDragging: Boolean = false,
 ) {
-    val dotHeight = 4.dp
 
     val scaleAnimatable = remember(currentPage) { Animatable(0f) }
 
@@ -54,7 +53,10 @@ fun StoryPageIndicator(
         if (scaleAnimatable.value == 1f) {
             onPageAnimationEnded()
         }
+
     }
+
+    val dotHeight = 4.dp
 
     Row(
         modifier = modifier
@@ -63,6 +65,7 @@ fun StoryPageIndicator(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
+
         repeat(pageCount) { index ->
             Box(
                 modifier = Modifier
