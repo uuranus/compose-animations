@@ -73,6 +73,7 @@ fun StoryPageTransition(
                         )
                     )
                 },
+
             contentAlignment = Alignment.Center
         ) {
             content(page)
@@ -81,4 +82,5 @@ fun StoryPageTransition(
 
 }
 
-fun PagerState.offsetFromCurrentPage(page: Int) = (currentPage - page) + currentPageOffsetFraction
+    fun PagerState.offsetFromCurrentPage(page: Int) =
+        (currentPage - page) + currentPageOffsetFraction
