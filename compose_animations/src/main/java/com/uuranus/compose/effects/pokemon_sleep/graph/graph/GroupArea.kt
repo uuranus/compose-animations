@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 fun GraphArea(
     modifier: Modifier = Modifier,
     xLabelCount: Int,
-    hideEdgeXTicker: Boolean,
+    hideEdgeXTicker: Boolean = true,
     maxYPosition: Int,
     minYPosition: Int,
     yAxisWidth: Int,
@@ -20,7 +20,7 @@ fun GraphArea(
     xAxisTickerHeight: Int = 0,
     yAxisTickerWidth: Int = 0,
     yLabelPositions: List<Int>,
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit = {},
 ) {
     val xAxisColor = Color(0xFF6DA3DE)
     val yAxisColor = Color(0xFF6DA3DE).copy(alpha = 0.6f)
