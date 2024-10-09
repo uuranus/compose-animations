@@ -1,44 +1,31 @@
 package com.uuranus.compose.effects.pokemon_sleep.graph.sleep
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material.Text
 import com.uuranus.compose.effects.pokemon_sleep.graph.graph.GraphArea
 import com.uuranus.compose.effects.pokemon_sleep.graph.graph.YLabel
 
 @Composable
 fun SleepDurationGraph(
     modifier: Modifier = Modifier,
-    sleepDurations: List<Int>,
+    xLabelCount: Int,
     xLabel: @Composable (Int) -> Unit,
+    bar: @Composable (Int) -> Unit,
+    barLabel: @Composable (Int) -> Unit = {},
     yLabelsInfo: List<YLabel>,
     yLabel: @Composable (yLabel: YLabel) -> Unit,
     minYPosition: Int = 0,
     maxYPosition: Int = 100,
 ) {
-
-    val xLabelCount = sleepDurations.size
 
     val xLabels = @Composable {
         repeat(xLabelCount) {
@@ -49,6 +36,18 @@ fun SleepDurationGraph(
     val yLabels = @Composable {
         repeat(yLabelsInfo.size) { index ->
             yLabel(yLabelsInfo[index])
+        }
+    }
+
+    val durationBar = @Composable {
+        repeat(xLabelCount) {
+            bar(it)
+        }
+    }
+
+    val barLabels = @Composable {
+        repeat(xLabelCount) {
+            barLabel(it)
         }
     }
 
@@ -71,41 +70,12 @@ fun SleepDurationGraph(
         )
     }
 
-    val durationBar = @Composable {
-        repeat(xLabelCount) {
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(IntrinsicSize.Max),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("${sleepDurations[it]}",
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        color =  Color(0xFF8BFCFE),
-                    )
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .background(
-                            color = Color(0xFF59F7FE),
-                            shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp)
-                        )
-                )
-            }
-        }
-    }
-
     Layout(
-        contents = listOf(xLabels, yLabels, groupArea, durationBar),
+        contents = listOf(xLabels, yLabels, groupArea, durationBar, barLabels),
         modifier = modifier
             .padding(start = 16.dp, top = 16.dp, end = 24.dp, bottom = 16.dp),
     ) {
-            (xLabelsMeasurables, yLabelsMeasurables, graphAreaMeasureable, durationBarMeasureable),
+            (xLabelsMeasurables, yLabelsMeasurables, graphAreaMeasureable, durationBarMeasureable, barLabelsMeasureable),
             constraints,
         ->
         val adjustedConstraints = constraints.copy(
@@ -148,14 +118,22 @@ fun SleepDurationGraph(
         val yLabelSpace = groupAreaHeight / (maxYPosition - minYPosition - 1)
 
         val durationBarPlaceables = durationBarMeasureable.mapIndexed { index, measurable ->
+            val barParentData = measurable.parentData as TimeGraphParentData
+            val barHeight = barParentData.duration
+
             val placeable = measurable.measure(
                 constraints.copy(
                     minWidth = xLabelPlaceables.first().width * 9 / 10,
                     maxWidth = xLabelPlaceables.first().width * 9 / 10,
-                    minHeight = groupAreaHeight * sleepDurations[index] / maxYPosition  ,
-                    maxHeight = groupAreaHeight * sleepDurations[index] / maxYPosition
+                    minHeight = groupAreaHeight * barHeight / maxYPosition,
+                    maxHeight = groupAreaHeight * barHeight / maxYPosition
                 )
             )
+            placeable
+        }
+
+        val barLabelsPlaceables = barLabelsMeasureable.map { measurable ->
+            val placeable = measurable.measure(adjustedConstraints)
             placeable
         }
 
@@ -176,10 +154,19 @@ fun SleepDurationGraph(
                     constraints.maxHeight - it.height
                 )
 
-                val duration = durationBarPlaceables[index]
-                duration.place(
+                val durationPlaceable = durationBarPlaceables[index]
+                durationPlaceable.place(
                     width,
-                    heightBaseline - duration.height
+                    heightBaseline - durationPlaceable.height
+                )
+
+                val barLabelPlaceable = barLabelsPlaceables[index]
+
+                val textHeight =
+                    heightBaseline - durationPlaceable.height - 12 - barLabelPlaceable.height
+                barLabelPlaceable.place(
+                    width + durationPlaceable.width / 2 - barLabelPlaceable.width / 2,
+                    textHeight
                 )
 
                 width += xLabelMaxWidth + xLabelSpace
@@ -189,10 +176,28 @@ fun SleepDurationGraph(
                 val height =
                     heightBaseline - yLabelSpace * (yLabelsInfo[index].position - minYPosition)
                 it.place(yLabelMaxWidth / 2 - it.width / 2, height - it.height / 2)
-            }
 
+            }
         }
 
     }
 
+}
+
+@Stable
+fun Modifier.timeGraphBar(
+    duration: Int,
+): Modifier {
+    return then(
+        TimeGraphParentData(
+            duration = duration,
+        )
+    )
+}
+
+class TimeGraphParentData(
+    val duration: Int,
+) : ParentDataModifier {
+    override fun Density.modifyParentData(parentData: Any?): TimeGraphParentData =
+        this@TimeGraphParentData
 }

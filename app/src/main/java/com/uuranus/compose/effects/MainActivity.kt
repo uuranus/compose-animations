@@ -31,7 +31,9 @@ import androidx.core.view.WindowCompat
 import com.uuranus.compose.effects.pokemon_sleep.CircularProgress
 import com.uuranus.compose.effects.pokemon_sleep.graph.graph.YLabel
 import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepDurationGraph
+import com.uuranus.compose.effects.sample.SleepDurationSample
 import com.uuranus.compose.effects.ui.theme.ComposeEffectsTheme
+import com.uuranus.compose.effects.x.Loading
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
@@ -61,7 +63,8 @@ class MainActivity : ComponentActivity() {
 
                     Box(
                         modifier = Modifier
-                            .fillMaxSize(),
+                            .fillMaxSize()
+                            .background(Color.Black),
                         contentAlignment = Alignment.Center
                     ) {
 //                        CircularProgress(
@@ -71,55 +74,11 @@ class MainActivity : ComponentActivity() {
 //                            progress = progress
 //
 //                        )
-                        SleepDurationGraph(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(24.dp)
-                                .aspectRatio(2f)
-                                .background(
-                                    Color(0xFF0089FA),
-                                    shape = RoundedCornerShape(12.dp)
-                                ),
-                            sleepDurations = listOf(80, 92, 100, 80, 68, 88, 92),
-                            xLabel = {
-                                Text(
-                                    text = when (it) {
-                                        0 -> "Mon"
-                                        1 -> "Tue"
-                                        2 -> "Wed"
-                                        3 -> "Thu"
-                                        4 -> "Fri"
-                                        5 -> "Sat"
-                                        6 -> "Sun"
-                                        else -> ""
-                                    },
-                                    style = TextStyle(
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 16.sp,
-                                        color = Color.White
-                                    )
-                                )
-                            },
-                            yLabelsInfo = listOf(
-                                YLabel("0", 0),
-                                YLabel("50", 50),
-                                YLabel("100", 100),
-                            ),
-                            yLabel = {
-                                Text(
-                                    text = it.description,
-                                    style = TextStyle(
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 16.sp,
-                                        color = Color.White
-                                    )
-                                )
-                            }
+                        SleepDurationSample(
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
-
                 }
-
             }
 
         }

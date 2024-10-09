@@ -1,18 +1,32 @@
 package com.uuranus.compose.effects.sample
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.uuranus.compose.effects.pokemon_sleep.graph.graph.YLabel
+import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepDurationGraph
 import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepGraph
 import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepType
+import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.timeGraphBar
 import com.uuranus.compose.effects.pokemon_sleep.graph.sound.SoundGraph
 import com.uuranus.compose.effects.pokemon_sleep.graph.sound.SoundType
 import com.uuranus.compose.effects.pokemon_sleep.graph.sound.soundDataPeriod
@@ -20,9 +34,9 @@ import com.uuranus.compose.effects.to24Hours
 import com.uuranus.compose.effects.ui.theme.LegendHeadingStyle
 
 @Composable
-fun SleepTypeGraphSampe(
-    modifier: Modifier = Modifier
-){
+fun SleepTypeGraphSample(
+    modifier: Modifier = Modifier,
+) {
     SleepGraph(
         sleepData = sleepData,
         modifier = modifier
@@ -135,3 +149,80 @@ private fun SleepTimeLabel(hour: Int, minutes: Int) {
     )
 }
 
+@Composable
+fun SleepDurationSample(
+    modifier: Modifier = Modifier,
+) {
+    val sleepDurations = listOf(80, 92, 100, 80, 68, 88, 92)
+
+    SleepDurationGraph(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(24.dp)
+            .aspectRatio(1.7f)
+            .background(
+                Color(0xFF0089FA),
+                shape = RoundedCornerShape(12.dp)
+            )
+            .padding(16.dp),
+        xLabelCount = 7,
+        xLabel = {
+            Text(
+                text = when (it) {
+                    0 -> "Mon"
+                    1 -> "Tue"
+                    2 -> "Wed"
+                    3 -> "Thu"
+                    4 -> "Fri"
+                    5 -> "Sat"
+                    6 -> "Sun"
+                    else -> ""
+                },
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = Color.White
+                ),
+            )
+        },
+        bar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .background(
+                        color = Color(0xFF59F7FE),
+                        shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp)
+                    )
+                    .timeGraphBar(
+                        duration = sleepDurations[it]
+                    )
+            )
+        },
+        barLabel = { index ->
+            Text(
+                "${sleepDurations[index]}",
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = Color(0xFF8BFCFE),
+                )
+            )
+        },
+        yLabelsInfo = listOf(
+            YLabel("0", 0),
+            YLabel("50", 50),
+            YLabel("100", 100),
+        ),
+        yLabel = {
+            Text(
+                text = it.description,
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+            )
+        }
+    )
+}
