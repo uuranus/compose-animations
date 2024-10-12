@@ -32,6 +32,7 @@ import com.uuranus.compose.effects.pokemon_sleep.CircularProgress
 import com.uuranus.compose.effects.pokemon_sleep.graph.graph.YLabel
 import com.uuranus.compose.effects.pokemon_sleep.graph.sleep.SleepDurationGraph
 import com.uuranus.compose.effects.sample.SleepDurationSample
+import com.uuranus.compose.effects.sample.SleepTypeGraphSample
 import com.uuranus.compose.effects.ui.theme.ComposeEffectsTheme
 import com.uuranus.compose.effects.x.Loading
 import kotlinx.coroutines.delay
@@ -77,6 +78,9 @@ class MainActivity : ComponentActivity() {
                         SleepDurationSample(
                             modifier = Modifier.fillMaxSize()
                         )
+//                        SleepTypeGraphSample(
+//                            modifier = Modifier.fillMaxSize()
+//                        )
                     }
                 }
             }

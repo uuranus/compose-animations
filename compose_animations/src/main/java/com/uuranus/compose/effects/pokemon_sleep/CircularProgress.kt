@@ -64,8 +64,8 @@ fun CircularProgress(
         mutableStateOf(Animatable(0f))
     }
 
-    LaunchedEffect(Unit) {
-        delay(2000)
+    LaunchedEffect(progress) {
+        delay(200)
         isDone = true
 
         launch {
@@ -216,6 +216,4 @@ private fun DrawScope.drawSparkEffect(color: Color, alpha: Float) {
         color = color.copy(alpha = alpha),
 
         )
-
-
 }

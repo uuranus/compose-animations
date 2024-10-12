@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -153,7 +154,7 @@ private fun SleepTimeLabel(hour: Int, minutes: Int) {
 fun SleepDurationSample(
     modifier: Modifier = Modifier,
 ) {
-    val sleepDurations = listOf(80, 92, 100, 80, 68, 88, 92)
+    val sleepDurations = listOf(80, 92, 100, 0, 50, 88, 92)
 
     SleepDurationGraph(
         modifier = modifier
@@ -191,7 +192,10 @@ fun SleepDurationSample(
                     .fillMaxWidth()
                     .fillMaxHeight()
                     .background(
-                        color = Color(0xFF59F7FE),
+                        color = Color(0xFF59F7FE).copy(
+                            alpha = if (it < sleepDurations.size / 2) 1f
+                            else 0.3f
+                        ),
                         shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp)
                     )
                     .timeGraphBar(
@@ -200,14 +204,18 @@ fun SleepDurationSample(
             )
         },
         barLabel = { index ->
-            Text(
-                "${sleepDurations[index]}",
-                style = TextStyle(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    color = Color(0xFF8BFCFE),
+            if (index < sleepDurations.size / 2) {
+                Text(
+                    "${sleepDurations[index]}",
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        color = Color(0xFF8BFCFE),
+                    )
                 )
-            )
+            }else{
+                Spacer(modifier = Modifier)
+            }
         },
         yLabelsInfo = listOf(
             YLabel("0", 0),

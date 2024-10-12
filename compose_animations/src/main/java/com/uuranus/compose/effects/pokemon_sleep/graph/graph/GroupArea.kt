@@ -34,7 +34,10 @@ fun GraphArea(
                 // Draw X Axis
                 drawRect(
                     color = xAxisColor,
-                    topLeft = Offset(0f, canvasHeight - xAxisHeight - xAxisTickerHeight),
+                    topLeft = Offset(
+                        yAxisTickerWidth.toFloat(),
+                        canvasHeight - xAxisHeight - xAxisTickerHeight
+                    ),
                     size = Size(canvasWidth - yAxisTickerWidth, xAxisHeight.toFloat())
                 )
 
@@ -47,6 +50,7 @@ fun GraphArea(
                         canvasHeight - xAxisHeight - xAxisTickerHeight
                     )
                 )
+
                 drawRect(
                     color = yAxisColor,
                     topLeft = Offset(canvasWidth - yAxisWidth, 0f),
@@ -56,25 +60,28 @@ fun GraphArea(
                     )
                 )
 
-                val rowCount = maxYPosition - minYPosition
+                val yRange = maxYPosition - minYPosition
 
                 // Draw Y Axis Guideline
-                val yLabelHeight = canvasHeight - xAxisTickerHeight - xAxisHeight
-                val yLabelInterval = yLabelHeight / rowCount
+                val yAxisHeight = canvasHeight - xAxisTickerHeight - xAxisHeight
+                val yInterval = yAxisHeight / yRange
 
                 yLabelPositions.forEach { position ->
-                    val yPos = (rowCount - (position - minYPosition)) * yLabelInterval
+                    val yPos = yAxisHeight - (position - minYPosition) * yInterval
                     // Align guideline with the label
                     drawRect(
                         color = yAxisColor,
-                        topLeft = Offset(yAxisWidth.toFloat(), yPos),
-                        size = Size(canvasWidth - yAxisWidth * 2, xAxisHeight.toFloat())
+                        topLeft = Offset(yAxisTickerWidth.toFloat(), yPos),
+                        size = Size(
+                            canvasWidth - yAxisTickerWidth,
+                            xAxisHeight.toFloat()
+                        )
                     )
 
                     // Draw y-axis tick
                     drawRect(
                         color = yAxisColor,
-                        topLeft = Offset(0f, yPos - xAxisHeight / 2),
+                        topLeft = Offset(0f, yPos),
                         size = Size(yAxisTickerWidth.toFloat(), yAxisWidth.toFloat())
                     )
                 }
@@ -92,7 +99,6 @@ fun GraphArea(
                         size = Size(yAxisWidth.toFloat(), xAxisTickerHeight.toFloat())
                     )
                 }
-
             }
 
     ) {

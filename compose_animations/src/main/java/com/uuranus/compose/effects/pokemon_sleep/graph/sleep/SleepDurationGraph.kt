@@ -3,7 +3,6 @@ package com.uuranus.compose.effects.pokemon_sleep.graph.sleep
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
@@ -54,7 +53,7 @@ fun SleepDurationGraph(
     val density = LocalDensity.current
 
     val xAxisHeight = with(density) {
-        3.dp.roundToPx()
+        2.dp.roundToPx()
     }
 
     val groupArea = @Composable {
@@ -115,9 +114,8 @@ fun SleepDurationGraph(
         )
 
         val xLabelSpace = (groupAreaWidth - xLabelMaxWidth * xLabelCount) / xLabelCount
-        val yLabelSpace = groupAreaHeight / (maxYPosition - minYPosition - 1)
 
-        val durationBarPlaceables = durationBarMeasureable.mapIndexed { index, measurable ->
+        val durationBarPlaceables = durationBarMeasureable.map { measurable ->
             val barParentData = measurable.parentData as TimeGraphParentData
             val barHeight = barParentData.duration
 
@@ -125,8 +123,8 @@ fun SleepDurationGraph(
                 constraints.copy(
                     minWidth = xLabelPlaceables.first().width * 9 / 10,
                     maxWidth = xLabelPlaceables.first().width * 9 / 10,
-                    minHeight = groupAreaHeight * barHeight / maxYPosition,
-                    maxHeight = groupAreaHeight * barHeight / maxYPosition
+                    minHeight =     (groupAreaHeight - xAxisHeight) *   (barHeight - minYPosition)/ (maxYPosition - minYPosition),
+                    maxHeight =   (groupAreaHeight - xAxisHeight)  * (barHeight - minYPosition)/ (maxYPosition - minYPosition),
                 )
             )
             placeable
@@ -146,7 +144,7 @@ fun SleepDurationGraph(
                 widthBaseline
 
             val heightBaseline =
-                constraints.maxHeight - labelGraphPadding - xLabelPlaceables.first().height
+                groupAreaHeight - xAxisHeight
 
             xLabelPlaceables.forEachIndexed { index, it ->
                 it.place(
@@ -174,9 +172,11 @@ fun SleepDurationGraph(
 
             yLabelsPlaceables.forEachIndexed { index, it ->
                 val height =
-                    heightBaseline - yLabelSpace * (yLabelsInfo[index].position - minYPosition)
-                it.place(yLabelMaxWidth / 2 - it.width / 2, height - it.height / 2)
-
+                    heightBaseline -   (groupAreaHeight - xAxisHeight)   * (yLabelsInfo[index].position - minYPosition)/ (maxYPosition - minYPosition)
+                it.place(
+                    yLabelMaxWidth / 2 - it.width / 2,
+                    height + xAxisHeight / 2 - it.height / 2
+                )
             }
         }
 
