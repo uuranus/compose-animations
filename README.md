@@ -28,20 +28,27 @@ If you want to see all the animations, go [here](https://github.com/uuranus/comp
 
 <table>
   <th>heart</th>
+  <th>loading</th>
   
   <tr>
     <td align="center"><img src = "https://github.com/user-attachments/assets/af59a028-b7cc-4e24-88a5-7bd62b5e557d" width = "200"></td>
+    <td align="center"><img src = "https://github.com/user-attachments/assets/cc82067c-7780-4994-8ac5-def2644bd544" width = "200"></td>
   </tr>
 
 </table>
 
 # Pokémon Sleep
 
-| Light Falling | Leaf Falling | Bubble Floating Up | Ripple Touch Effect|
-|:--:|:--:|:--:|:--:|
-<img src = "https://github.com/user-attachments/assets/0a95d7e7-fe9d-4770-b152-c25c861dca96" width = "200">|<img src = "https://github.com/user-attachments/assets/1e65b788-d258-4a26-bb71-f78fefa05faf" width = "200">|<img src = "https://github.com/user-attachments/assets/ee0b5144-9d11-4236-a9c6-066e879787af" width = "200"> | <img src = "https://github.com/user-attachments/assets/0b814129-8793-4ba7-b10f-4e241c79fe04" width = "200">|
-|**Sleep Type Graph**| **Sleep Sound Graph**|**Ball Wallpaper**|
-|<img src = "https://github.com/user-attachments/assets/073f2fd1-53dc-46c9-ab1b-ea7cdc769e89" width = "200"> |<img src = "https://github.com/user-attachments/assets/b022c08f-958f-44c9-9eb1-7b683f8effc8" width = "200"> |<img src = "https://github.com/user-attachments/assets/7b135536-eb6d-444e-ae02-646fd9fa6daf" width = "200"> |
+| Light Falling | Leaf Falling | Bubble Floating Up | Circular Progress | Sleep Type Graph |
+|:--:|:--:|:--:|:--:|:--:
+|<img src = "https://github.com/user-attachments/assets/0a95d7e7-fe9d-4770-b152-c25c861dca96" width = "180">|<img src = "https://github.com/user-attachments/assets/1e65b788-d258-4a26-bb71-f78fefa05faf" width = "180">|<img src = "https://github.com/user-attachments/assets/ee0b5144-9d11-4236-a9c6-066e879787af" width = "180"> | <img src = "https://github.com/user-attachments/assets/e6e62a82-2a3d-424e-92ca-9e4eee9ab423" width = "180">|<img src = "https://github.com/user-attachments/assets/073f2fd1-53dc-46c9-ab1b-ea7cdc769e89" width = "180">|
+|**Sleep Sound Graph**|**Sleep Duration Graph**| **Ball Wallpaper**| **Ripple Touch Effect**|
+|<img src = "https://github.com/user-attachments/assets/b022c08f-958f-44c9-9eb1-7b683f8effc8" width = "180"> |<img src = "https://github.com/user-attachments/assets/260d4e22-1bb1-4a32-ae95-6b01c315fefa" width = "180">|<img src = "https://github.com/user-attachments/assets/7b135536-eb6d-444e-ae02-646fd9fa6daf" width = "180"> |<img src = "https://github.com/user-attachments/assets/0b814129-8793-4ba7-b10f-4e241c79fe04" width = "180"> |
 
 If you want to see all the animations, go [here](https://github.com/uuranus/compose-animations/blob/main/docs/Pok%C3%A9monSleep.md)
+
+# Spotify
+| Dot Loading |
+|:--:|
+|<img src = "https://github.com/user-attachments/assets/01234d14-4c3d-46c4-91d5-453a36972d5d" width = "200"> |
 
