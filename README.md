@@ -40,10 +40,12 @@ If you want to see all the animations, go [here](https://github.com/uuranus/comp
 # Pokémon Sleep
 
 | Light Falling | Leaf Falling | Bubble Floating Up | Circular Progress | Sleep Type Graph |
-|:--:|:--:|:--:|:--:|:--:
-|<img src = "https://github.com/user-attachments/assets/0a95d7e7-fe9d-4770-b152-c25c861dca96" width = "180">|<img src = "https://github.com/user-attachments/assets/1e65b788-d258-4a26-bb71-f78fefa05faf" width = "180">|<img src = "https://github.com/user-attachments/assets/ee0b5144-9d11-4236-a9c6-066e879787af" width = "180"> | <img src = "https://github.com/user-attachments/assets/e6e62a82-2a3d-424e-92ca-9e4eee9ab423" width = "180">|<img src = "https://github.com/user-attachments/assets/073f2fd1-53dc-46c9-ab1b-ea7cdc769e89" width = "180">|
-|**Sleep Sound Graph**|**Sleep Duration Graph**| **Ball Wallpaper**| **Ripple Touch Effect**|
-|<img src = "https://github.com/user-attachments/assets/b022c08f-958f-44c9-9eb1-7b683f8effc8" width = "180"> |<img src = "https://github.com/user-attachments/assets/260d4e22-1bb1-4a32-ae95-6b01c315fefa" width = "180">|<img src = "https://github.com/user-attachments/assets/7b135536-eb6d-444e-ae02-646fd9fa6daf" width = "180"> |<img src = "https://github.com/user-attachments/assets/0b814129-8793-4ba7-b10f-4e241c79fe04" width = "180"> |
+|:--:|:--:|:--:|:--:|:--:|
+| <img src = "https://github.com/user-attachments/assets/0a95d7e7-fe9d-4770-b152-c25c861dca96" width = "180">| <img src = "https://github.com/user-attachments/assets/1e65b788-d258-4a26-bb71-f78fefa05faf" width = "180"> | <img src = "https://github.com/user-attachments/assets/ee0b5144-9d11-4236-a9c6-066e879787af" width = "180"> | <img src = "https://github.com/user-attachments/assets/e6e62a82-2a3d-424e-92ca-9e4eee9ab423" width = "180"> | <img src = "https://github.com/user-attachments/assets/073f2fd1-53dc-46c9-ab1b-ea7cdc769e89" width = "180"> |
+
+| **Sleep Sound Graph** | **Sleep Duration Graph** | **Ball Wallpaper** | **Ripple Touch Effect** |
+|:--:|:--:|:--:|:--:|
+|<img src = "https://github.com/user-attachments/assets/b022c08f-958f-44c9-9eb1-7b683f8effc8" width = "180"> | <img src = "https://github.com/user-attachments/assets/260d4e22-1bb1-4a32-ae95-6b01c315fefa" width = "180">| <img src = "https://github.com/user-attachments/assets/7b135536-eb6d-444e-ae02-646fd9fa6daf" width = "180"> |<img src = "https://github.com/user-attachments/assets/0b814129-8793-4ba7-b10f-4e241c79fe04" width = "180"> |
 
 If you want to see all the animations, go [here](https://github.com/uuranus/compose-animations/blob/main/docs/Pok%C3%A9monSleep.md)
 
